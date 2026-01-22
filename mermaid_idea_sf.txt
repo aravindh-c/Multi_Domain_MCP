@@ -1,0 +1,62 @@
+flowchart TD
+
+  BB[Bitbucket Repo]
+  WH[Bitbucket Webhook PR Merge]
+  PRU[Bitbucket Webhook PR Update Optional]
+  SCH[Nightly Scheduler]
+  META[Snowflake Information Schema Metadata Only]
+
+  WH --> IDX
+  PRU --> IDX
+  SCH --> IDX
+  SCH --> MSYNC
+  META --> MSYNC
+
+  subgraph OFF[Offline Indexer Service]
+    IDX[Incremental Index Runner]
+    RED[Redact Secrets]
+    CHK[Chunk SQL Artifacts]
+    PARSE[Parse SQL And Extract Dependencies]
+    EMB[Create Embeddings]
+    UPD[Upsert Objects And Versions]
+    EDGE[Replace Dependency Edges For Changed Objects]
+  end
+
+  IDX --> RED --> CHK --> PARSE --> UPD --> EDGE
+  CHK --> EMB
+
+  subgraph STORE[Storage Layer Self Hosted]
+    SQLITE[SQLite Catalog And Graph Tables]
+    VEC[FAISS Vector Index]
+  end
+
+  UPD --> SQLITE
+  EDGE --> SQLITE
+  EMB --> VEC
+
+  subgraph MS[Metadata Sync Service Optional]
+    MSYNC[Metadata Snapshot Runner]
+    CATALOG[Update Object Catalog And Columns]
+  end
+
+  MSYNC --> CATALOG --> SQLITE
+
+  subgraph API[Query API Service Online]
+    AUTH[AuthN And AuthZ]
+    RBAC[RBAC And Tenant Filters]
+    RETV[Vector Retrieve TopK Chunks]
+    MAP[Map Chunks To Object Nodes]
+    TRAV[Graph Traverse For Impact N Hops]
+    PACK[Evidence Pack Builder With Citations]
+    LLM[LLM Answer Only From Evidence]
+    OUT[Structured Response Impact Buckets Checklist Citations Freshness]
+  end
+
+  USER[User Request] --> AUTH --> RBAC
+  RBAC --> RETV --> MAP --> TRAV --> PACK --> LLM --> OUT
+
+  RBAC --> SQLITE
+  RETV --> VEC
+  TRAV --> SQLITE
+  PACK --> SQLITE
+  PACK --> VEC
