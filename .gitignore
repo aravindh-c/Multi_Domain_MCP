@@ -12,7 +12,7 @@ venv/
 # Environment
 .env
 .env.local
-
+Claude Setup.exe
 # IDE
 .vscode/
 .idea/
