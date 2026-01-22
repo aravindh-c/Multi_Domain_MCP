@@ -1,0 +1,36 @@
+flowchart TD
+    A[User Query /chat] --> B[Intake]
+    B --> C[Intent Classifier #40;LLM+Pydantic#41;]
+    C --> D[Route Guard]
+
+    D -->|PRICE_COMPARE| P[mcp_price node -> MCP price server -> comparison]
+    D -->|FINANCE_STOCK| F[mcp_finance node]
+    D -->|DIET_NUTRITION| V[Diet vault retrieve]
+    D -->|CLARIFY| G[Generate #40;clarifying question#41;]
+
+    %% Finance branch
+    F -->|Market-wide?| F1[Top gainers tool]
+    F1 -->|Unavailable| R1[Refusal set]
+    F1 -->|Available| F2[Store top_gainers, citation, tool_calls]
+    F -->|Single ticker| F3[finance_bundle -> quote/history/news]
+    F3 --> F4[Store quote/history/news, citation, tool_calls]
+    R1 --> G
+    F2 --> G
+    F4 --> G
+
+    %% Diet branch
+    V --> V1[Retrieve vault chunks #40;FAISS, user_id filter#41;]
+    V1 --> V2[Add citations + tool_calls]
+    V2 --> G
+
+    %% Price branch
+    P --> P1[Add citations + tool_calls]
+    P1 --> G
+
+    %% Generation
+    G --> H[Response Generator #40;LLM#41;]
+    H --> T[Trace/Log #40;LangSmith + app logs#41;]
+    T --> O[Structured Response #40;route, answer, citations, tool_calls, refusal, meta#41;]
+
+    %% Refusal paths
+    R1 --> H

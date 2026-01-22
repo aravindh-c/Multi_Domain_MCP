@@ -1,0 +1,20 @@
+[
+  {
+    "product_id": "iphone15-128",
+    "name": "iPhone 15 128GB",
+    "price": 59999,
+    "currency": "INR",
+    "vendor": "StoreA",
+    "location": "IN",
+    "source": "mcp_price_server:fixture"
+  },
+  {
+    "product_id": "pixel8a-128",
+    "name": "Pixel 8a 128GB",
+    "price": 39999,
+    "currency": "INR",
+    "vendor": "StoreB",
+    "location": "IN",
+    "source": "mcp_price_server:fixture"
+  }
+]

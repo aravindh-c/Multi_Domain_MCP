@@ -1,0 +1,7 @@
+{
+  "ticker": "TCS.NS",
+  "price": 3985.0,
+  "currency": "INR",
+  "change_pct": 0.45,
+  "source": "mcp_finance_server:fixture"
+}

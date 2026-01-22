@@ -1,0 +1,12 @@
+flowchart TD
+    A[User provides medical paragraph] --> B[Ingest #40;vault_store.py#41;]
+    B --> C[Split into chunks]
+    C --> D[Embed chunks #40;OpenAI embeddings#41;]
+    D --> E[Store in FAISS #40; .faiss/user_vault.index #41; with user_id, chunk_id metadata]
+
+    %% Query-time retrieval
+    Q[Diet query triggers retrieval] --> R[Load FAISS index]
+    R --> S[Filter by user_id, top_k]
+    S --> T[Return VaultChunk list]
+    T --> U[Add citations chunk:#123;user_id#125;:#123;chunk_id#125;]
+    U --> V[Used in LLM prompt for diet answer]

@@ -1,0 +1,197 @@
+
+# 📌 USER MEDICAL HISTORY SUMMARY (FOR RAG)
+
+## 👤 Profile
+
+* **Age**: Early 30s
+* **Sex**: Male
+* **Relevant History**: Left kidney stone surgery (past)
+
+---
+
+## 🧪 LAB HISTORY – KEY FINDINGS (Trend-based)
+
+### 1️⃣ **Blood Sugar / Diabetes**
+
+* **Pattern**: Prediabetes → early diabetes → improved control
+* **HbA1c**:
+
+  * Aug 2025: **7.2%** (Diabetic range)
+  * Sep 2025: **6.5%**
+  * Dec 2025: **6.1%** (Prediabetic range)
+* **FBS**: Improved to normal range (≈ 88–96 mg/dL)
+* **PPBS**: Variable, spikes with diet lapses
+
+**Interpretation**
+
+* Insulin resistance present
+* Responds well to diet + metformin
+* Not insulin-dependent
+
+---
+
+### 2️⃣ **Cholesterol / Lipids**
+
+* **LDL**:
+
+  * Aug 2025: **187 mg/dL (High)**
+  * Sep 2025: **126 mg/dL (Improved on statin)**
+  * Dec 2025: **149 mg/dL (Rebound after stopping statin)**
+* **HDL**: Low-normal (31–41 mg/dL)
+* **Triglycerides**: Borderline → improved
+* **Non-HDL cholesterol**: Elevated when statin stopped
+
+**Interpretation**
+
+* Dyslipidemia, statin-responsive
+* LDL rises quickly without medication
+
+---
+
+### 3️⃣ **Uric Acid**
+
+* Aug 2025: **8.3 mg/dL**
+* Sep 2025: **10.2 mg/dL (High)**
+* Dec 2025: **8.3 mg/dL (Still high)**
+
+**Interpretation**
+
+* Chronic hyperuricemia
+* High risk due to past kidney stone
+* Needs hydration + diet + medication
+
+---
+
+### 4️⃣ **Kidney Health**
+
+* **History**: Left kidney stone surgery (past)
+* **Creatinine**: Normal (0.8–1.0 mg/dL)
+* **eGFR**: Normal (>90)
+* **Urine analysis**: Normal, no blood/protein
+
+**Interpretation**
+
+* Kidney function currently normal
+* Previous stone side occasionally sensitive
+* Stone prevention is priority
+
+---
+
+### 5️⃣ **Liver (Fatty Liver)**
+
+* Aug 2025 USG: **Grade I fatty liver**
+* LFTs: AST/ALT/GGT **normal to mildly elevated**, later normalized
+
+**Interpretation**
+
+* Reversible fatty liver
+* Diet and weight sensitive
+
+---
+
+### 6️⃣ **Vitamin Status**
+
+* **Vitamin D**:
+
+  * Aug 2025: **9.5 ng/mL (Severe deficiency)**
+  * Dec 2025: **21.8 ng/mL (Insufficient)**
+* **Vitamin B12**:
+
+  * Aug 2025: ~320 pg/mL
+  * Dec 2025: **141 pg/mL (Deficient)**
+
+**Interpretation**
+
+* Vitamin D improving but not optimal
+* B12 deficiency likely due to:
+
+  * Metformin use
+  * Functional absorption inefficiency (not structural gut disease)
+
+---
+
+## 💊 MEDICATION HISTORY
+
+### ✅ **Currently Taking**
+
+* **Metformin**
+
+  * Purpose: Blood sugar control
+* **Statin (cholesterol-lowering)**
+
+  * Purpose: LDL reduction
+* **Uric acid–lowering medication**
+
+  * Purpose: Prevent gout/kidney stones
+* **Nervijen (Methylcobalamin)**
+
+  * Purpose: Vitamin B12 deficiency correction
+
+### ❌ **Not Taking**
+
+* Insulin
+* Neuropathic pain drugs (Pregabalin / NP combos)
+* Homeopathy (ignored as requested)
+
+---
+
+## 🍽️ DIETARY GUIDANCE (FOR RAG ANSWERS)
+
+### 🟢 **OK / GOOD FOODS (Preferred)**
+
+* Eggs (3 whole + whites)
+* Low-fat paneer, tofu
+* Greek yogurt / curd / buttermilk
+* Milk (toned / skim)
+* Moong dal
+* Green peas (moderate)
+* Oats
+* Vegetables (lauki, carrot, beans)
+* Seeds (chia, flax, pumpkin)
+* Lemon water (stone prevention)
+* Adequate water (3–3.5 L/day)
+
+---
+
+### 🟡 **LIMITED FOODS (Portion-Controlled)**
+
+* Chicken: **250 g × max 3 times/week**
+* Fish: 1–2 times/week
+* Chickpeas, rajma: small portions
+* Peanuts: small handful
+* Fruit: low-GI, limited quantity
+
+---
+
+### 🔴 **AVOID / RARE**
+
+* Red meat
+* Organ meat
+* Bone broth
+* Shellfish
+* Sardines, anchovies
+* High-dose whey protein
+* Sugary drinks
+* Alcohol
+* Late-night heavy meals
+
+---
+
+## ⚠️ SPECIAL RULES (IMPORTANT FOR RETRIEVAL)
+
+* **High animal protein + dehydration** → increases uric acid risk
+* **Skipping dinner is OK**, but medicines must be taken with:
+
+  * Curd / milk / light protein
+* **Plant purines** (peas, dals) are safer than animal purines
+* **B12 food alone is insufficient** → supplementation required with metformin
+* **Early dinner (~6 pm)** improves sugar, gut, fatty liver
+
+---
+
+## 🧠 SUMMARY STATEMENT (ONE-LINE FOR RAG)
+
+> Male in early 30s with history of kidney stone surgery, prediabetes with improving glycemic control, statin-responsive dyslipidemia, chronic hyperuricemia, fatty liver (grade I, reversible), vitamin D insufficiency, and metformin-associated vitamin B12 deficiency; managed with metformin, statin, uric-acid medication, B12 supplementation, hydration, and controlled diet.
+
+---
+

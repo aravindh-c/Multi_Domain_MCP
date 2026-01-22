@@ -1,0 +1,16 @@
+fastapi==0.111.0
+uvicorn==0.30.1
+# Allow resolver to pick a compatible pydantic for FastAPI + pydantic-settings + LangChain
+pydantic>=2.7.4,<3.0.0
+pydantic-settings>=2.3.0,<3.0.0
+langchain==0.2.5
+langchain-community==0.2.5
+langchain-openai==0.1.7
+langgraph==0.1.9
+langchain-text-splitters==0.2.1
+faiss-cpu==1.8.0
+numpy==1.26.4
+python-dotenv==1.0.1
+httpx==0.27.0
+tiktoken==0.7.0
+rich==13.7.1
