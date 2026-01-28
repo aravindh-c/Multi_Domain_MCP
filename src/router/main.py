@@ -1,12 +1,14 @@
 """Request router service with tenant isolation, RBAC, and rate limiting."""
 import logging
 import time
+from pathlib import Path
 from collections import defaultdict
 from typing import Dict, Optional
 
 import httpx
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from src.app.multi_tenant_schemas import (
     MultiTenantChatRequest,
@@ -39,6 +41,9 @@ RATE_LIMITS: Dict[str, TenantRateLimit] = defaultdict(
 
 # Orchestrator service URL (from env or service discovery)
 ORCHESTRATOR_URL = "http://orchestrator-service:8000"
+
+# Chat UI (static files)
+static_dir = Path(__file__).resolve().parent.parent.parent / "static"
 
 
 def get_tenant_id_from_jwt(authorization: Optional[str] = None, x_tenant_id: Optional[str] = Header(None)) -> str:
@@ -107,6 +112,15 @@ def check_guardrails(tenant_id: str, config: TenantConfig, query: str) -> tuple[
     return True, None
 
 
+@app.get("/")
+async def root():
+    """Serve chat UI if static files exist."""
+    ui_path = static_dir / "index.html"
+    if ui_path.exists():
+        return FileResponse(ui_path)
+    return {"message": "Multi-Tenant Request Router. Use POST /chat or add static/index.html for UI."}
+
+
 @app.post("/chat")
 async def route_chat(
     request: Request,
@@ -117,15 +131,17 @@ async def route_chat(
     """Route chat request with tenant isolation."""
     start_time = time.time()
     
-    # Extract tenant_id
+    # Extract tenant_id (default to t1 for UI / simple testing)
     tenant_id = x_tenant_id or payload.tenant_id
     if not tenant_id:
-        tenant_id = get_tenant_id_from_jwt(authorization, x_tenant_id)
+        try:
+            tenant_id = get_tenant_id_from_jwt(authorization, x_tenant_id)
+        except HTTPException:
+            tenant_id = "t1"
     
     # Get tenant config (in production, from database/Secrets Manager)
     config = TENANT_CONFIGS.get(tenant_id)
     if not config:
-        # Default config (tuned for max 3 users: 10/min, 100/hour per tenant)
         config = TenantConfig(
             tenant_id=tenant_id,
             rate_limit_per_minute=10,
@@ -164,7 +180,6 @@ async def route_chat(
             response.raise_for_status()
             result = response.json()
             
-            # Emit metrics
             latency_ms = int((time.time() - start_time) * 1000)
             metrics = TenantMetrics(
                 tenant_id=tenant_id,

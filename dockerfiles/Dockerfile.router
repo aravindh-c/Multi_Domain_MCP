@@ -11,10 +11,11 @@ RUN pip install --no-cache-dir \
     boto3 \
     httpx
 
-# Copy router code
+# Copy router code and chat UI
 COPY src/router/ /app/src/router/
 COPY src/app/multi_tenant_schemas.py /app/src/app/
 COPY src/observability/cloudwatch.py /app/src/observability/
+COPY static/ /app/static/
 
 # Set Python path
 ENV PYTHONPATH=/app

@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 class MultiTenantChatRequest(BaseModel):
     """Chat request with tenant isolation."""
-    tenant_id: str = Field(..., description="Tenant identifier (from JWT/header)")
+    tenant_id: str | None = Field(None, description="Tenant identifier (from JWT/header; default t1)")
     user_id: str
     session_id: str
     query: str

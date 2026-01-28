@@ -220,7 +220,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://127.0.0.1:8000/chat';
+        const API_URL = (window.location.origin || '') + '/chat';
         const chatArea = document.getElementById('chatArea');
         const queryInput = document.getElementById('queryInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -253,6 +253,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
+                        tenant_id: 't1',
                         user_id: 'u123',
                         session_id: 's' + Date.now(),
                         query: query,

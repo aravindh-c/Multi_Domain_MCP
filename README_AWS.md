@@ -74,7 +74,19 @@ aws secretsmanager create-secret \
   --secret-string '{"OPENAI_API_KEY":"sk-...","LANGSMITH_API_KEY":"ls-..."}'
 ```
 
-### 4. Test
+### 4. Use the chatbot (UI and API)
+
+- **Chat UI**: The router serves a chat window at **GET /**.
+  - From your laptop (no VPN): run `kubectl port-forward -n multi-tenant-chatbot svc/request-router-service 8000:8000`, then open **http://127.0.0.1:8000/** in your browser.
+  - From inside the VPC: get the ingress hostname with `kubectl get ingress -n multi-tenant-chatbot` and open **http://<ALB_HOSTNAME>/**.
+- **Chat API**: `POST /chat` with JSON body: `tenant_id`, `user_id`, `session_id`, `query`, `locale`. Example (with port-forward):
+  ```bash
+  curl -X POST http://127.0.0.1:8000/chat -H "Content-Type: application/json" -d "{\"tenant_id\":\"t1\",\"user_id\":\"u123\",\"session_id\":\"s1\",\"query\":\"Is paneer okay for dinner?\",\"locale\":\"en-IN\"}"
+  ```
+
+See **DEPLOYMENT_SUMMARY.md** → “How to use the chatbot (UI and API)” for more options.
+
+### 5. Test (legacy example)
 
 ```bash
 curl -X POST https://chatbot.example.com/chat \

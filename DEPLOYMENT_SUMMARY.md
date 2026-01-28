@@ -140,6 +140,55 @@ Structured JSON with:
    kubectl get ingress -n multi-tenant-chatbot
    ```
 
+## 🖥️ How to use the chatbot (UI and API)
+
+The app exposes a **chat UI** and a **REST API**. The ingress is an **internal** ALB, so you can reach it only from inside the VPC (or via port-forward from your machine).
+
+### Option A: Chat UI in the browser
+
+1. **Get the internal ALB hostname** (from a machine that can reach the VPC, or after port-forward):
+   ```bash
+   kubectl get ingress -n multi-tenant-chatbot
+   ```
+   Use the **HOST** (or ADDRESS) value, e.g. `k8s-multiten-xxxxx.us-east-1.elb.amazonaws.com`.
+
+2. **If you are outside the VPC**, create a port-forward to the router, then open the UI in your browser:
+   ```bash
+   kubectl port-forward -n multi-tenant-chatbot svc/request-router-service 8000:8000
+   ```
+   Then open: **http://127.0.0.1:8000/**  
+   You get the chat window; type a message or use the example buttons (Price Compare, Finance, Diet).
+
+3. **If you are inside the VPC** (e.g. bastion or EC2 in the same VPC), open in a browser:
+   **http://\<ALB_HOSTNAME\>/**  
+   Same chat UI; messages are sent to `POST /chat` on the same host.
+
+### Option B: Call the API with curl
+
+- **With port-forward** (from your laptop):
+  ```bash
+  kubectl port-forward -n multi-tenant-chatbot svc/request-router-service 8000:8000
+  ```
+  Then in another terminal:
+  ```bash
+  curl -X POST http://127.0.0.1:8000/chat -H "Content-Type: application/json" -d "{\"tenant_id\":\"t1\",\"user_id\":\"u123\",\"session_id\":\"s1\",\"query\":\"Is paneer okay for dinner?\",\"locale\":\"en-IN\"}"
+  ```
+
+- **From inside the VPC** (replace with your ALB hostname):
+  ```bash
+  curl -X POST http://<ALB_HOSTNAME>/chat -H "Content-Type: application/json" -d "{\"tenant_id\":\"t1\",\"user_id\":\"u123\",\"session_id\":\"s1\",\"query\":\"Is paneer okay for dinner?\",\"locale\":\"en-IN\"}"
+  ```
+
+### Summary
+
+| What        | Where |
+|------------|--------|
+| Chat UI    | **GET /** on the router (browser: same host as API) |
+| Chat API   | **POST /chat** with JSON body (`tenant_id`, `user_id`, `session_id`, `query`, `locale`) |
+| Health     | **GET /health** |
+
+If you only have the cluster from your laptop, use **port-forward** and open **http://127.0.0.1:8000/** to use the chat window.
+
 ## 🔄 Next Steps
 
 1. **Production Enhancements**:

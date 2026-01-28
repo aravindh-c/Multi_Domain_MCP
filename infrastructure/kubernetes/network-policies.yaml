@@ -12,7 +12,7 @@ spec:
   - Egress
   ingress:
   - from:
-    - namespaceSelector: {}  # Allow from ingress
+    - namespaceSelector: {}
   egress:
   - to:
     - podSelector:
@@ -78,5 +78,4 @@ spec:
     ports:
     - protocol: TCP
       port: 8000
-  egress:
-  []  # No egress needed for inference engine
+  egress: []
