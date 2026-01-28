@@ -36,6 +36,7 @@ spec:
         envFrom:
         - secretRef:
             name: rag-secrets
+            optional: true
         volumeMounts:
         - name: vector-db
           mountPath: /data/faiss
