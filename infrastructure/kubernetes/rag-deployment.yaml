@@ -18,7 +18,7 @@ spec:
         node-type: cpu
       containers:
       - name: rag
-        image: 026544696831.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+        image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
         ports:
         - containerPort: 8000
         env:

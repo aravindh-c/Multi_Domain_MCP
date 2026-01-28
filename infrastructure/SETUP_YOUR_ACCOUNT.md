@@ -1,6 +1,6 @@
 # Setup for Your AWS Account
 
-**Account ID:** `026544696831`  
+**Account ID:** `026544696832`  
 **Region:** `us-east-1`  
 **Project:** multitenant-chatbot  
 **Access:** internal only  
@@ -76,7 +76,7 @@ kubectl apply -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.1
 ## 3. Create ECR repositories and push images
 
 ```bash
-AWS_ACCOUNT=026544696831
+AWS_ACCOUNT=026544696832
 REGION=us-east-1
 
 for repo in multitenant-chatbot-request-router multitenant-chatbot-orchestrator multitenant-chatbot-rag-service; do
@@ -126,7 +126,7 @@ Role names used in the manifests:
 - `multitenant-chatbot-rag-role`
 - `multitenant-chatbot-vllm-role`
 
-Use the AWS console (IAM → Roles → Create role → Web identity → EKS OIDC provider for your cluster, then attach policies) or Terraform/CloudFormation. After creating each role, set its ARN in the service account annotation in `infrastructure/kubernetes/irsa-service-accounts.yaml` (already set for account `026544696831`).
+Use the AWS console (IAM → Roles → Create role → Web identity → EKS OIDC provider for your cluster, then attach policies) or Terraform/CloudFormation. After creating each role, set its ARN in the service account annotation in `infrastructure/kubernetes/irsa-service-accounts.yaml` (already set for account `026544696832`).
 
 ---
 
@@ -194,9 +194,9 @@ curl -X POST http://INTERNAL_ALB_DNS/chat \
 |------|-------------|
 | 1 | Create (or update) secret `multitenant-chatbot-secrets` in Secrets Manager in `eu-north-1` with `OPENAI_API_KEY` (and optionally `LANGSMITH_API_KEY`). |
 | 2 | Create EKS cluster in `eu-north-1` (or use existing), add CPU and GPU node groups, install NVIDIA device plugin. |
-| 3 | Create ECR repos, build and push the three images to `026544696831.dkr.ecr.eu-north-1.amazonaws.com/`. |
+| 3 | Create ECR repos, build and push the three images to `026544696832.dkr.ecr.eu-north-1.amazonaws.com/`. |
 | 4 | Create the four IAM roles for IRSA and associate them with the service accounts. |
 | 5 | Run `kubectl apply` for namespace, IRSA, secrets, deployments, and optionally network policies and ingress. |
 | 6 | Use the internal ALB hostname from inside the VPC to send requests with `X-Tenant-Id` and the JSON body above. |
 
-All names (cluster, roles, repos, secret, namespace) are already set in the repo for account `026544696831` and region `eu-north-1`.
+All names (cluster, roles, repos, secret, namespace) are already set in the repo for account `026544696832` and region `eu-north-1`.

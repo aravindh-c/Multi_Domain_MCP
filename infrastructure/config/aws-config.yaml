@@ -1,7 +1,7 @@
 # AWS deployment config - multitenant-chatbot
-# Account: 026544696831 | Region: us-east-1 | Access: internal | Max users: 3
+# Account: 026544696832 | Region: us-east-1 | Access: internal | Max users: 3
 
-account_id: "026544696831"
+account_id: "026544696832"
 region: "us-east-1"
 project_name: "multitenant-chatbot"
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Deployment script for multitenant-chatbot
-# Account: 026544696831 | Region: us-east-1 | Internal only | Max 3 users
+# Account: 026544696832 | Region: us-east-1 | Internal only | Max 3 users
 
 set -e
 

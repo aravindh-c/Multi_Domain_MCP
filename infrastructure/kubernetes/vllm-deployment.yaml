@@ -1,4 +1,4 @@
-# vLLM inference | Account: 026544696831 | Region: us-east-1 | Minimal GPU: g4dn.xlarge (T4)
+# vLLM inference | Account: 026544696832 | Region: us-east-1 | Minimal GPU: g4dn.xlarge (T4)
 apiVersion: apps/v1
 kind: Deployment
 metadata:

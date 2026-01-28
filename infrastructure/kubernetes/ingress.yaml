@@ -1,5 +1,5 @@
 # Internal ALB only (no public domain, no ACM cert)
-# Account: 026544696831 | Region: us-east-1
+# Account: 026544696832 | Region: us-east-1
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
