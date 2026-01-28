@@ -15,8 +15,14 @@ spec:
         app: request-router
     spec:
       serviceAccountName: request-router-sa
-      nodeSelector:
-        node-type: cpu
+      # Allow scheduling on nodes that may have common EKS taints (e.g. not-ready during bootstrap)
+      tolerations:
+      - key: node.kubernetes.io/not-ready
+        operator: Exists
+        effect: NoSchedule
+      - key: node.kubernetes.io/unreachable
+        operator: Exists
+        effect: NoSchedule
       containers:
       - name: router
         image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest

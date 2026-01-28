@@ -14,8 +14,13 @@ spec:
         app: orchestrator
     spec:
       serviceAccountName: orchestrator-sa
-      nodeSelector:
-        node-type: cpu
+      tolerations:
+      - key: node.kubernetes.io/not-ready
+        operator: Exists
+        effect: NoSchedule
+      - key: node.kubernetes.io/unreachable
+        operator: Exists
+        effect: NoSchedule
       containers:
       - name: orchestrator
         image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
