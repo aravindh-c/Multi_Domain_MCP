@@ -1,0 +1,69 @@
+# AWS deployment config - multitenant-chatbot
+# Account: 026544696831 | Region: us-east-1 | Access: internal | Max users: 3
+
+account_id: "026544696831"
+region: "us-east-1"
+project_name: "multitenant-chatbot"
+
+# EKS
+eks:
+  cluster_name: "multitenant-chatbot-eks"
+  kubernetes_version: "1.28"
+  node_groups:
+    cpu:
+      name: "cpu-nodes"
+      instance_types: ["t3.medium"]   # minimal CPU for router/orchestrator/rag
+      min_size: 1
+      max_size: 3
+      desired_size: 1
+      labels:
+        node-type: "cpu"
+    gpu:
+      name: "gpu-nodes"
+      instance_types: ["g4dn.xlarge"] # minimal GPU (1 x T4) in us-east-1
+      min_size: 0
+      max_size: 2
+      desired_size: 1
+      labels:
+        node-type: "gpu"
+        accelerator: "nvidia-tesla-t4"
+
+# Access: internal only (no public ALB, no ACM)
+access: "internal"
+alb_scheme: "internal"
+
+# ECR (same region as EKS)
+ecr:
+  region: "us-east-1"
+  repository_name: "multitenant-chatbot"
+  # Image names: multitenant-chatbot/request-router, orchestrator, rag-service
+
+# Secrets Manager
+secrets_manager:
+  secret_name: "multitenant-chatbot-secrets"
+  keys:
+    - "OPENAI_API_KEY"
+    - "LANGSMITH_API_KEY"  # optional
+
+# Capacity (max 3 users)
+capacity:
+  max_users: 3
+  rate_limit_per_tenant_per_minute: 10
+  rate_limit_per_tenant_per_hour: 100
+  replicas:
+    request_router: 1
+    orchestrator: 1
+    rag_service: 1
+    vllm_inference: 1
+
+# Storage
+storage:
+  faiss_pvc_size: "20Gi"
+  storage_class: "gp3"  # default in us-east-1
+
+# IRSA role names (will be created)
+iam:
+  request_router_role: "multitenant-chatbot-request-router-role"
+  orchestrator_role: "multitenant-chatbot-orchestrator-role"
+  vllm_role: "multitenant-chatbot-vllm-role"
+  rag_role: "multitenant-chatbot-rag-role"

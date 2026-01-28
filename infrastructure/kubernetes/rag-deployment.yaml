@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-service
+  namespace: multi-tenant-chatbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rag-service
+  template:
+    metadata:
+      labels:
+        app: rag-service
+    spec:
+      serviceAccountName: rag-sa
+      nodeSelector:
+        node-type: cpu
+      containers:
+      - name: rag
+        image: 026544696831.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: AWS_REGION
+          value: "us-east-1"
+        - name: SECRETS_MANAGER_SECRET_NAME
+          value: "multitenant-chatbot-secrets"
+        - name: VECTOR_DB_PATH
+          value: "/data/faiss"
+        envFrom:
+        - secretRef:
+            name: rag-secrets
+        volumeMounts:
+        - name: vector-db
+          mountPath: /data/faiss
+        resources:
+          requests:
+            cpu: "1000m"
+            memory: "4Gi"
+          limits:
+            cpu: "4000m"
+            memory: "8Gi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: vector-db
+        persistentVolumeClaim:
+          claimName: vector-db-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-service
+  namespace: multi-tenant-chatbot
+spec:
+  selector:
+    app: rag-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vector-db-pvc
+  namespace: multi-tenant-chatbot
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: gp3

@@ -1,0 +1,26 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install additional dependencies for router
+RUN pip install --no-cache-dir \
+    boto3 \
+    httpx
+
+# Copy router code
+COPY src/router/ /app/src/router/
+COPY src/app/multi_tenant_schemas.py /app/src/app/
+COPY src/observability/cloudwatch.py /app/src/observability/
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Expose port
+EXPOSE 8000
+
+# Run router
+CMD ["uvicorn", "src.router.main:app", "--host", "0.0.0.0", "--port", "8000"]
