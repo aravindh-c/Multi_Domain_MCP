@@ -5,8 +5,9 @@ on:
     branches: [ main ]
 
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  # Hard-code region/account here to avoid relying on extra secrets.
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: "026544696831"
   REPO_ROUTER: multitenant-chatbot-request-router
   REPO_ORCH: multitenant-chatbot-orchestrator
   REPO_RAG: multitenant-chatbot-rag-service
@@ -26,7 +27,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to ECR
+      - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
