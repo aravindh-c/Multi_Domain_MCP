@@ -5,7 +5,8 @@ metadata:
   name: vllm-inference
   namespace: multi-tenant-chatbot
 spec:
-  replicas: 1
+  # Set to 1 only when you have GPU nodes + NVIDIA device plugin installed.
+  replicas: 0
   selector:
     matchLabels:
       app: vllm-inference

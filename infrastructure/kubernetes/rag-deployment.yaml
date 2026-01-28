@@ -42,11 +42,11 @@ spec:
           mountPath: /data/faiss
         resources:
           requests:
-            cpu: "1000m"
-            memory: "4Gi"
+            cpu: "500m"
+            memory: "1Gi"
           limits:
-            cpu: "4000m"
-            memory: "8Gi"
+            cpu: "2000m"
+            memory: "2Gi"
         livenessProbe:
           httpGet:
             path: /health
@@ -90,4 +90,5 @@ spec:
   resources:
     requests:
       storage: 20Gi
-  storageClassName: gp3
+  # Use the cluster default StorageClass. If you specifically want gp3,
+  # ensure it exists (`kubectl get storageclass`) and set it here.
