@@ -7,7 +7,7 @@ on:
 env:
   # Hard-code region/account here to avoid relying on extra secrets.
   AWS_REGION: us-east-1
-  AWS_ACCOUNT_ID: "026544696831"
+  AWS_ACCOUNT_ID: "026544696832"
   REPO_ROUTER: multitenant-chatbot-request-router
   REPO_ORCH: multitenant-chatbot-orchestrator
   REPO_RAG: multitenant-chatbot-rag-service
