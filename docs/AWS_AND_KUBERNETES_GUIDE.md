@@ -12,6 +12,7 @@ This document explains **Docker**, **Kubernetes**, what we do in this project, a
 4. [AWS flow: Mermaid graph](#4-aws-flow-mermaid-graph)
 5. [Component-by-component explanation](#5-component-by-component-explanation)
 6. [Multi-user, concurrent requests, and scalability](#6-multi-user-concurrent-requests-and-scalability)
+7. [Ingress, Node vs Pod, and vLLM vs EKS](#7-ingress-node-vs-pod-and-vllm-vs-eks)
 
 ---
 
@@ -359,6 +360,102 @@ So: **requests are handled concurrently**; **LLM calls happen per request in par
 | **Optional HPA** | You can add a Horizontal Pod Autoscaler (HPA) on CPU or custom metrics so the number of replicas grows/shrinks with load. See [infrastructure/kubernetes/README.md](../infrastructure/kubernetes/README.md) for manual scaling commands. |
 
 So: **multi-user** is handled by stateless, per-request processing and per-tenant isolation; **concurrent requests** are handled by async I/O and (when replicas &gt; 1) load-balanced pods; **LLM calls** happen once per request and can run in parallel for different users; **scalability** is achieved by adding replicas and, optionally, HPA.
+
+---
+
+## 7. Ingress, Node vs Pod, and vLLM vs EKS
+
+This section gives **more coverage** on: (1) **Ingress**—what it is and how we use it; (2) **Node vs Pod**—whether a node is a superset of a pod, whether a pod runs inside a node, and whether 1 node = 1 pod; (3) **Role of vLLM**—GPU vs orchestration, and how that differs from EKS orchestration.
+
+---
+
+### 7.1 Ingress (more coverage)
+
+**What is Ingress?**
+
+- **Ingress** is a Kubernetes **resource** (an API object). It does **not** send traffic by itself. It describes **rules** for how HTTP/HTTPS traffic from outside the cluster should be routed to **Services** inside the cluster.
+- Think of it as: “When someone hits this host/path, send the request to this Service.” The **Ingress controller** (in our case, the **AWS Load Balancer Controller**) reads these rules and **configures a real load balancer** (an **ALB**) so that traffic actually flows that way.
+
+**How it works in our project**
+
+1. We create an **Ingress** object named `chatbot-ingress` in the namespace `multi-tenant-chatbot`.
+2. We set **annotations** so the AWS Load Balancer Controller creates an **Application Load Balancer (ALB)** and wires it to our Ingress rules.
+3. The Ingress **spec** says: “For path `/` (and anything under it), send traffic to the Service `request-router-service` on port 8000.”
+4. The controller creates an **internal ALB** in our VPC, registers the router Service’s pods as targets, and keeps health checks and routing in sync.
+
+So the flow is: **User → ALB (created because of Ingress) → request-router-service → router pods.** The Ingress is the “contract”; the ALB is the “implementation.”
+
+**Our Ingress YAML (high level)**
+
+| Part | Purpose |
+|------|---------|
+| `ingressClassName: alb` | Use the AWS ALB Ingress controller. |
+| `alb.ingress.kubernetes.io/scheme: internal` | Create an **internal** ALB (not internet-facing). Only reachable from inside the VPC (or via kubectl port-forward from your machine). |
+| `alb.ingress.kubernetes.io/target-type: ip` | Register **pod IPs** as ALB targets (not node ports). |
+| `alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'` | ALB listens on port 80 (HTTP). |
+| `rules` → `path: /` → `request-router-service:8000` | All requests to `/` (and subpaths like `/chat`, `/health`) go to the router Service. |
+| Health-check annotations | ALB uses `/health` on the router to decide which pods are healthy. |
+
+**Summary:** Ingress = rules for “where should HTTP traffic go?” The AWS controller turns those rules into an ALB that forwards traffic to the router Service (and thus to router pods). We do **not** use Ingress for pod-to-pod traffic inside the cluster (that’s what **Services** are for).
+
+---
+
+### 7.2 Node vs Pod: is Node a superset of Pod? Does Pod run inside Node? Is 1 node = 1 pod?
+
+**Short answers**
+
+- **Is a Node a superset of a Pod?** In a containment sense, **yes**: a **Node** is the **machine** (VM or physical server); **Pods run on Nodes**. So the Node “contains” the Pods that run on it. The Node is not a Kubernetes object that “wraps” a single Pod; it’s the host where many Pods can run.
+- **Does a Pod run inside a Node?** **Yes.** A Pod runs **on** a Node. The Kubernetes **scheduler** places each Pod on some Node. The Node provides CPU, memory, and (if applicable) GPU; the Pod’s containers execute on that Node.
+- **Is 1 node = 1 pod?** **No.** One Node can run **many** Pods. Typically you have far fewer Nodes than Pods: e.g. 2–10 Nodes and dozens of Pods (router, orchestrator, RAG, system pods, etc.). The scheduler packs multiple Pods onto each Node subject to resource requests and limits.
+
+**Relationship in one picture**
+
+```mermaid
+flowchart TB
+    subgraph CLUSTER["Kubernetes cluster"]
+        subgraph N1["Node 1 (VM / machine)"]
+            P1["Pod: router"]
+            P2["Pod: orchestrator"]
+            P3["Pod: RAG"]
+        end
+        subgraph N2["Node 2 (VM / machine)"]
+            P4["Pod: router"]
+            P5["Pod: orchestrator"]
+        end
+    end
+    DEPLOYMENT["Deployment: 2 router replicas"] -.-> P1
+    DEPLOYMENT -.-> P4
+```
+
+- **Node** = the box (the machine). It has OS, kubelet, container runtime; it runs many Pods.
+- **Pod** = the smallest runnable unit we schedule. One or more containers share the Pod’s network and storage. Pods run **inside** (on) Nodes.
+- **Deployment** = “I want N replicas of this app.” Kubernetes creates Pods to match; the **scheduler** decides **which Node** each Pod runs on. So: **Nodes don’t create Pods**; the **control plane** (via Deployments, etc.) creates Pods, and the **scheduler** assigns each Pod to a Node.
+
+**Summary:** Node = host machine. Pod = workload unit that runs **on** a Node. One Node runs many Pods. 1 node = 1 pod is **not** the model; we have **many Pods per Node** (and optionally many replicas of the same app spread across Nodes).
+
+---
+
+### 7.3 Role of vLLM: GPU inference only, or orchestration? What orchestration does EKS do?
+
+**What is vLLM?**
+
+- **vLLM** is an **inference server** for large language models (LLMs). You run it as a service that loads a model (e.g. Mistral, Llama) and exposes an **API** (often OpenAI-compatible) so other services can send prompts and get completions.
+- It is built for **GPU** use: it uses GPU memory and compute for fast inference. In our manifests we use `nodeSelector: node-type: gpu` and `nvidia.com/gpu: 1` so the vLLM **pod** runs only on **GPU nodes**. So in this project, **vLLM is for GPU-based LLM inference**, not for orchestration.
+
+**Is vLLM for “orchestration”?**
+
+- **No.** vLLM does **not** orchestrate your app. It does one job: **run the model and answer inference requests**. It does not decide intent, call RAG, or route between tools. Our **orchestrator** (the Python service in `src/app/` and `src/orchestration/`) does that: it classifies intent, calls RAG or MCPs, and then calls **either** an external LLM (e.g. OpenAI) **or** an internal vLLM endpoint to get the final text. So:
+  - **Orchestrator (our service)** = application logic: intent, RAG, tools, and “who to call for the LLM answer” (OpenAI vs vLLM).
+  - **vLLM** = optional **backend** that can replace or sit alongside OpenAI for **inference only** (run the model on our own GPU).
+
+**What does EKS “orchestrate” then?**
+
+- **EKS (Kubernetes)** orchestrates **infrastructure and workload placement**: **where** Pods run (which Node), **how many** replicas, **networking** (Services, Ingress), **scaling**, **restarts**, etc. It does **not** know about “intent” or “RAG”; it just runs our containers and keeps them healthy.
+- So we have two different meanings of “orchestration”:
+  1. **App-level orchestration** = our **orchestrator service**: coordinates intent → RAG / tools → LLM (OpenAI or vLLM) and returns one answer.
+  2. **Infrastructure orchestration** = **EKS**: schedules Pods on Nodes, creates Services and Ingress, scales replicas, manages the cluster.
+
+**In one sentence:** vLLM is for **GPU LLM inference**; our **orchestrator** is for **application flow** (intent, RAG, tools, LLM); **EKS** is for **running and placing** those services (Pods on Nodes, load balancing, scaling).
 
 ---
 
