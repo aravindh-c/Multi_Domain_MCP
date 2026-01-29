@@ -15,7 +15,7 @@ Store your OpenAI API key (and optional LangSmith key) so the app can read them 
 ```bash
 aws secretsmanager create-secret \
   --region us-east-1 \
-  --name multitenant-chatbot-secrets \
+  --name multitenant-chatbot-secrets1 \
   --secret-string '{"OPENAI_API_KEY":"sk-YOUR_OPENAI_KEY","LANGSMITH_API_KEY":"ls-YOUR_LANGSMITH_KEY"}'
 ```
 
@@ -24,7 +24,7 @@ If the secret already exists, update it:
 ```bash
 aws secretsmanager put-secret-value \
   --region us-east-1 \
-  --secret-id multitenant-chatbot-secrets \
+  --secret-id multitenant-chatbot-secrets1 \
   --secret-string '{"OPENAI_API_KEY":"sk-YOUR_OPENAI_KEY","LANGSMITH_API_KEY":"ls-YOUR_LANGSMITH_KEY"}'
 ```
 
@@ -105,15 +105,15 @@ The pods need IAM roles so they can read Secrets Manager and write CloudWatch. C
 
 **4.1 Request Router role**  
 - Trust policy: allow `multitenant-chatbot` namespace, service account `request-router-sa`.  
-- Permissions: read `multitenant-chatbot-secrets`, write CloudWatch Logs and CloudWatch Metrics in `eu-north-1`.
+- Permissions: read `multitenant-chatbot-secrets1`, write CloudWatch Logs and CloudWatch Metrics in `eu-north-1`.
 
 **4.2 Orchestrator role**  
 - Same trust for `orchestrator-sa`.  
-- Permissions: read `multitenant-chatbot-secrets`, write CloudWatch Logs and CloudWatch Metrics.
+- Permissions: read `multitenant-chatbot-secrets1`, write CloudWatch Logs and CloudWatch Metrics.
 
 **4.3 RAG role**  
 - Same trust for `rag-sa`.  
-- Permissions: read `multitenant-chatbot-secrets`, write CloudWatch Logs and CloudWatch Metrics.
+- Permissions: read `multitenant-chatbot-secrets1`, write CloudWatch Logs and CloudWatch Metrics.
 
 **4.4 vLLM role**  
 - Same trust for `vllm-sa`.  
@@ -192,7 +192,7 @@ curl -X POST http://INTERNAL_ALB_DNS/chat \
 
 | Step | What you do |
 |------|-------------|
-| 1 | Create (or update) secret `multitenant-chatbot-secrets` in Secrets Manager in `eu-north-1` with `OPENAI_API_KEY` (and optionally `LANGSMITH_API_KEY`). |
+| 1 | Create (or update) secret `multitenant-chatbot-secrets1` in Secrets Manager in `eu-north-1` with `OPENAI_API_KEY` (and optionally `LANGSMITH_API_KEY`). |
 | 2 | Create EKS cluster in `eu-north-1` (or use existing), add CPU and GPU node groups, install NVIDIA device plugin. |
 | 3 | Create ECR repos, build and push the three images to `026544696832.dkr.ecr.eu-north-1.amazonaws.com/`. |
 | 4 | Create the four IAM roles for IRSA and associate them with the service accounts. |

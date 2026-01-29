@@ -40,7 +40,7 @@ ecr:
 
 # Secrets Manager
 secrets_manager:
-  secret_name: "multitenant-chatbot-secrets"
+  secret_name: "multitenant-chatbot-secrets1"
   keys:
     - "OPENAI_API_KEY"
     - "LANGSMITH_API_KEY"  # optional

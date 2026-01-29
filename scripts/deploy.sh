@@ -31,7 +31,7 @@ if [ -n "${OPENAI_API_KEY}" ]; then
     -n ${NAMESPACE} \
     --dry-run=client -o yaml | kubectl apply -f -
 else
-  echo "OPENAI_API_KEY not set; skip K8s secrets (ensure Secrets Manager secret multitenant-chatbot-secrets exists and IRSA can read it)."
+  echo "OPENAI_API_KEY not set; skip K8s secrets (ensure Secrets Manager secret multitenant-chatbot-secrets1 exists and IRSA can read it)."
 fi
 
 # Deploy services (order: vLLM -> RAG -> orchestrator -> router)

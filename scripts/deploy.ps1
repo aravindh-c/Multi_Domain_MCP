@@ -26,7 +26,7 @@ if ($env:OPENAI_API_KEY) {
         -n $NAMESPACE `
         --dry-run=client -o yaml | kubectl apply -f -
 } else {
-    Write-Host "OPENAI_API_KEY not set; skip K8s secrets (ensure Secrets Manager secret multitenant-chatbot-secrets exists and IRSA can read it)."
+    Write-Host "OPENAI_API_KEY not set; skip K8s secrets (ensure Secrets Manager secret multitenant-chatbot-secrets1 exists and IRSA can read it)."
 }
 
 Write-Host "Deploying vLLM (GPU nodes)..."

@@ -34,7 +34,7 @@ spec:
         - name: AWS_REGION
           value: "us-east-1"
         - name: SECRETS_MANAGER_SECRET_NAME
-          value: "multitenant-chatbot-secrets"
+          value: "multitenant-chatbot-secrets1"
         envFrom:
         - secretRef:
             name: orchestrator-secrets
