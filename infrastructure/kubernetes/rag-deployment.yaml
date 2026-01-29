@@ -61,8 +61,9 @@ spec:
           periodSeconds: 5
       volumes:
       - name: vector-db
-        persistentVolumeClaim:
-          claimName: vector-db-pvc
+        emptyDir: {}
+        # No PVC: EKS Auto Mode / some node pools don't support EBS.
+        # Vector index is rebuilt on pod start (ephemeral).
 
 ---
 apiVersion: v1
@@ -77,18 +78,3 @@ spec:
   - port: 8000
     targetPort: 8000
   type: ClusterIP
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: vector-db-pvc
-  namespace: multi-tenant-chatbot
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
-  # Use the cluster default StorageClass. If you specifically want gp3,
-  # ensure it exists (`kubectl get storageclass`) and set it here.
