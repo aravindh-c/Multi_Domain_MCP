@@ -87,12 +87,21 @@ def chat(
         
         if route == "CLARIFY":
             meta.latency_ms = int(time.time() * 1000 - start)
+        # Normalize refusal reason to string (state may have str or edge-case type)
+        reason_str = None
+        if refusal_reason is not None:
+            reason_str = refusal_reason if isinstance(refusal_reason, str) else str(refusal_reason)
+        # Normalize tool_calls to ToolCallLog-shaped dicts (only tool_name, status, error)
+        tool_calls_clean = [
+            {"tool_name": tc.get("tool_name", ""), "status": tc.get("status", "ok"), "error": tc.get("error")}
+            for tc in (tool_calls or [])
+        ]
         response = ChatResponse(
-            route=route,
-            answer=answer,
-            citations=citations,
-            tool_calls=tool_calls,
-            refusal={"is_refused": bool(refusal_reason), "reason": refusal_reason} if refusal_reason else {"is_refused": False, "reason": None},
+            route=route or "CLARIFY",
+            answer=answer or "",
+            citations=citations or [],
+            tool_calls=tool_calls_clean,
+            refusal={"is_refused": bool(reason_str), "reason": reason_str},
             meta=meta,
         )
         return response

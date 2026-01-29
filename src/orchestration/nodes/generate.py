@@ -56,7 +56,8 @@ def generate_node(state: Dict[str, Any]) -> Dict[str, Any]:
     query = state["request"].query
 
     if route == "CLARIFY":
-        question = state["intent"].clarifying_question or "Could you provide more specifics?"
+        intent = state.get("intent")
+        question = (intent.clarifying_question if intent else None) or "Could you provide more specifics? What would you like help with? (e.g. price comparison, stocks, or diet/nutrition)"
         state["answer"] = question
         return state
 
@@ -146,15 +147,20 @@ def generate_node(state: Dict[str, Any]) -> Dict[str, Any]:
                         answer += f"₹{stock.get('price', 0):.2f} ({stock.get('change_pct', 0):+.2f}%)\n"
                     answer += f"\nSource: {top_gainers.get('source', 'mcp_finance_server')}\nNot financial advice."
                 else:
-                    # Single ticker response
-                    # Only include history/news if we have actual data (not empty)
+                    # Single ticker response (only if we have quote data; otherwise refusal is set in mcp_finance_node)
+                    if not quote:
+                        state["answer"] = (
+                            "I couldn't fetch stock data for this ticker. "
+                            "The finance data service is not available in this environment. "
+                            "You can ask general finance questions instead."
+                        )
+                        return state
                     history_str = _render_history(history) if history else "No historical data available"
                     news_list = [n.dict() for n in news] if news else []
-                    
                     prompt = ChatPromptTemplate.from_messages([("system", FINANCE_SYSTEM), ("user", FINANCE_USER_TEMPLATE)])
                     msg = prompt.format_messages(
-                        ticker=quote.ticker if quote else "N/A",
-                        quote=quote.dict() if quote else {},
+                        ticker=quote.ticker,
+                        quote=quote.dict(),
                         history=history_str,
                         news=news_list,
                     )

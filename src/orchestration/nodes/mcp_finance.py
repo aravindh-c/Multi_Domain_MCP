@@ -143,6 +143,11 @@ def mcp_finance_node(state: Dict[str, Any]) -> Dict[str, Any]:
         state["tool_calls"].append({"tool_name": "mcp_finance.bundle", "status": "ok"})
     except (ValidationError, Exception) as exc:  # noqa: BLE001
         logger.error("Finance tool failed: %s", exc)
+        state["refusal"] = (
+            "I couldn't fetch stock data for this ticker right now. "
+            "The finance data service is not available (e.g. not running in this environment). "
+            "Please try again later or ask a general finance question."
+        )
         if state.get("tool_calls") is None:
             state["tool_calls"] = []
         state["tool_calls"].append({"tool_name": "mcp_finance.bundle", "status": "error", "error": str(exc)})
