@@ -4,6 +4,8 @@ from pydantic import BaseModel, Field
 
 
 class ChatRequest(BaseModel):
+    model_config = {"extra": "ignore"}  # allow tenant_id from router
+
     user_id: str
     session_id: str
     query: str
