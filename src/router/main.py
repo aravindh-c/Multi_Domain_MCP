@@ -178,18 +178,24 @@ async def route_chat(
                 },
             )
             response.raise_for_status()
-            result = response.json()
-            
+            try:
+                result = response.json()
+            except Exception as e:
+                logger.error("Orchestrator response not valid JSON: %s", e)
+                raise HTTPException(status_code=502, detail="Orchestrator returned invalid response")
+            citations = result.get("citations") or []
+            refusal = result.get("refusal") or {}
+            meta = result.get("meta") or {}
             latency_ms = int((time.time() - start_time) * 1000)
             metrics = TenantMetrics(
                 tenant_id=tenant_id,
                 route=result.get("route", "UNKNOWN"),
                 latency_ms=latency_ms,
-                chunk_ids=[c.get("ref", "") for c in result.get("citations", [])],
-                citations=result.get("citations", []),
-                refusal_reason=result.get("refusal", {}).get("reason"),
-                token_usage=result.get("meta", {}).get("token_usage", {}),
-                cost_usd_estimate=result.get("meta", {}).get("cost_usd_estimate", 0.0),
+                chunk_ids=[(c.get("ref") if isinstance(c, dict) else "") for c in citations],
+                citations=citations,
+                refusal_reason=refusal.get("reason") if isinstance(refusal, dict) else None,
+                token_usage=meta.get("token_usage") if isinstance(meta.get("token_usage"), dict) else {},
+                cost_usd_estimate=meta.get("cost_usd_estimate", 0.0) if isinstance(meta.get("cost_usd_estimate"), (int, float)) else 0.0,
             )
             emit_metrics(metrics)
             log_request(tenant_id, payload.query, result.get("route"), latency_ms)
