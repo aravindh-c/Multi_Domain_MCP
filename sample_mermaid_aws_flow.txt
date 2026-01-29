@@ -1,0 +1,72 @@
+flowchart TB
+    subgraph ENTRY["Entry points"]
+        USER["User (browser / API client)"]
+        GITHUB["GitHub (push to main)"]
+    end
+
+    subgraph CI["CI: GitHub Actions"]
+        GITHUB --> |trigger| BUILD["Build Docker images"]
+        BUILD --> |push| ECR
+    end
+
+    subgraph AWS["AWS Account"]
+        subgraph ECR["ECR (Container Registry)"]
+            REPO_R["request-router repo"]
+            REPO_O["orchestrator repo"]
+            REPO_RAG["rag-service repo"]
+        end
+
+        subgraph IAM["IAM"]
+            OIDC["EKS OIDC Provider"]
+            ROLE_R["request-router-role"]
+            ROLE_O["orchestrator-role"]
+            ROLE_RAG["rag-role"]
+            ROLE_V["vllm-role"]
+            OIDC --> ROLE_R
+            OIDC --> ROLE_O
+            OIDC --> ROLE_RAG
+            OIDC --> ROLE_V
+        end
+
+        SM["Secrets Manager\n(multitenant-chatbot-secrets1)"]
+
+        subgraph EKS["EKS Cluster"]
+            CP["Control plane\n(managed by AWS)"]
+            subgraph NG["Node group(s)"]
+                N1["Node 1"]
+                N2["Node 2"]
+            end
+            CP --> NG
+
+            subgraph NS["Namespace: multi-tenant-chatbot"]
+                subgraph PODS["Pods (our app)"]
+                    R["request-router pod"]
+                    O["orchestrator pod"]
+                    RAG["rag-service pod"]
+                end
+                SA["ServiceAccounts\n(IRSA: link to IAM roles)"]
+            end
+            NG --> PODS
+            SA --> PODS
+        end
+
+        subgraph LB["Load balancing"]
+            ALB["Internal ALB\n(created by Ingress)"]
+            INGRESS["Ingress\n(chatbot-ingress)"]
+            INGRESS --> ALB
+            ALB --> R
+        end
+    end
+
+    USER --> |"1. HTTP (port-forward or VPC)"| ALB
+    ALB --> R
+    R --> |"2. Forward /chat"| O
+    O --> |"3. RAG / LLM"| RAG
+    R --> |"4. Response"| USER
+
+    ROLE_O --> |"Read secret"| SM
+    ROLE_RAG --> |"Read secret"| SM
+    O --> |"IRSA"| ROLE_O
+    RAG --> |"IRSA"| ROLE_RAG
+
+    ECR --> |"Pull images"| NG
