@@ -197,9 +197,11 @@ async def route_chat(
                 token_usage=meta.get("token_usage") if isinstance(meta.get("token_usage"), dict) else {},
                 cost_usd_estimate=meta.get("cost_usd_estimate", 0.0) if isinstance(meta.get("cost_usd_estimate"), (int, float)) else 0.0,
             )
-            emit_metrics(metrics)
-            log_request(tenant_id, payload.query, result.get("route"), latency_ms)
-            
+            try:
+                emit_metrics(metrics)
+                log_request(tenant_id, payload.query, result.get("route"), latency_ms)
+            except Exception as obs:
+                logger.warning("Observability failed (response still returned): %s", obs)
             return result
     except httpx.HTTPError as e:
         logger.error(f"Orchestrator request failed: {e}")
