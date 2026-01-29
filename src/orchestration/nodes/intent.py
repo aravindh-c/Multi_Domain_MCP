@@ -53,7 +53,8 @@ def _fallback_intent(query: str) -> IntentPrediction:
     elif any(k in lower for k in ["diet", "eat", "food", "calorie", "protein", "good for me", "paneer"]):
         route = "DIET_NUTRITION"
     else:
-        route = "CLARIFY"
+        # No specific domain identified -> general query (LLM answer with caution)
+        route = "GENERAL_QUERY"
     return IntentPrediction(route=route, confidence=0.4, clarifying_question=None, extracted_entities=None)
 
 
@@ -80,7 +81,8 @@ def intent_node(state: Dict[str, Any]) -> Dict[str, Any]:
         prediction = _fallback_intent(query)
 
     state["intent"] = prediction
-    state["route"] = prediction.route
+    # When classifier says CLARIFY (no specific domain), route to GENERAL_QUERY for LLM answer with caution
+    state["route"] = "GENERAL_QUERY" if prediction.route == "CLARIFY" else prediction.route
     if state.get("tool_calls") is None:
         state["tool_calls"] = []
     state["tool_calls"].append({"tool_name": "intent_classifier", "status": "ok"})

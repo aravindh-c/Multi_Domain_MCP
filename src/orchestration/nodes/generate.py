@@ -61,6 +61,23 @@ def generate_node(state: Dict[str, Any]) -> Dict[str, Any]:
         state["answer"] = question
         return state
 
+    if route == "GENERAL_QUERY":
+        # No specific domain identified: answer with LLM and caution message
+        caution = "This is general information only. Not financial, medical, or purchasing advice.\n\n"
+        try:
+            llm = _llm()
+            prompt = ChatPromptTemplate.from_messages([
+                ("system", "You are a helpful assistant. Answer the user's question concisely and accurately. Do not give financial, medical, or purchasing advice."),
+                ("user", "{query}"),
+            ])
+            msg = prompt.format_messages(query=query)
+            answer = _invoke_llm_with_retry(llm, msg)
+            state["answer"] = caution + answer
+        except Exception as exc:
+            logger.exception("General query generation failed: %s", exc)
+            state["answer"] = caution + "I couldn't generate a response right now. Please try again."
+        return state
+
     # Clear generation error
     state["generation_error"] = None
     

@@ -36,6 +36,7 @@ def build_workflow():
             "PRICE_COMPARE": "mcp_price",
             "FINANCE_STOCK": "mcp_finance",
             "CLARIFY": "generate",
+            "GENERAL_QUERY": "generate",
         },
     )
 

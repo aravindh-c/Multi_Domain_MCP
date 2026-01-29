@@ -21,7 +21,7 @@ class IntentEntities(BaseModel):
 
 
 class IntentPrediction(BaseModel):
-    route: str = Field(..., pattern="^(PRICE_COMPARE|FINANCE_STOCK|DIET_NUTRITION|CLARIFY)$")
+    route: str = Field(..., pattern="^(PRICE_COMPARE|FINANCE_STOCK|DIET_NUTRITION|CLARIFY|GENERAL_QUERY)$")
     confidence: float = Field(..., ge=0, le=1)
     clarifying_question: Optional[str] = None
     extracted_entities: Optional[IntentEntities] = None
