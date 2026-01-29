@@ -1,0 +1,34 @@
+# eksctl cluster config – multitenant-chatbot
+# Use: eksctl create cluster -f infrastructure/eksctl-config.yaml
+#      eksctl delete cluster -f infrastructure/eksctl-config.yaml
+# Account: 026544696832 | Region: us-east-1
+
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: multitenant-chatbot-eks
+  region: us-east-1
+  version: "1.28"
+
+managedNodeGroups:
+  - name: cpu-nodes
+    instanceTypes: ["t3.medium"]
+    minSize: 1
+    maxSize: 3
+    desiredCapacity: 1
+    labels:
+      node-type: cpu
+    tags:
+      nodegroup: cpu
+
+  - name: gpu-nodes
+    instanceTypes: ["g4dn.xlarge"]
+    minSize: 0
+    maxSize: 2
+    desiredCapacity: 0
+    labels:
+      node-type: gpu
+      accelerator: nvidia-tesla-t4
+    tags:
+      nodegroup: gpu

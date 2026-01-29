@@ -6,6 +6,8 @@
 **Access:** internal only  
 **Max users:** 3  
 
+For a **single file with the exact order** (create cluster → add node groups with names → add-ons → Secrets Manager → ECR → IRSA → deploy), see **[docs/CREATE_SETUP_IN_ORDER.md](../docs/CREATE_SETUP_IN_ORDER.md)**.
+
 ---
 
 ## 1. Create the secret in AWS Secrets Manager

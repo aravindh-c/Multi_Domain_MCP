@@ -255,3 +255,4 @@ Update these values before deployment:
 - Architecture: `docs/aws_multi_tenant_architecture.md`
 - Kubernetes: `infrastructure/kubernetes/README.md`
 - AWS Deployment: `README_AWS.md`
+- **Export, teardown, and recreate**: [docs/EXPORT_TEARDOWN_RECREATE.md](docs/EXPORT_TEARDOWN_RECREATE.md) – turn off all services and recreate the full setup later from scripts and config.

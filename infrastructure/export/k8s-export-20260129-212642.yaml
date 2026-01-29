@@ -1,0 +1,4603 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/restartedAt: "2026-01-29T15:47:56+05:30"
+    creationTimestamp: "2026-01-29T15:44:23Z"
+    generateName: orchestrator-755465f57d-
+    generation: 1
+    labels:
+      app: orchestrator
+      pod-template-hash: 755465f57d
+    name: orchestrator-755465f57d-p8d4p
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: orchestrator-755465f57d
+      uid: ba8bc974-c9ab-4d1d-8642-4be8c291fe03
+    resourceVersion: "522603"
+    uid: 1185c0fd-31e2-490a-9839-682f484c4fec
+  spec:
+    containers:
+    - env:
+      - name: RAG_SERVICE_URL
+        value: http://rag-service:8000
+      - name: VLLM_SERVICE_URL
+        value: http://vllm-service:8000
+      - name: AWS_REGION
+        value: us-east-1
+      - name: SECRETS_MANAGER_SECRET_NAME
+        value: multitenant-chatbot-secrets1
+      - name: AWS_STS_REGIONAL_ENDPOINTS
+        value: regional
+      - name: AWS_ROLE_ARN
+        value: arn:aws:iam::026544696832:role/multitenant-chatbot-orchestrator-role
+      - name: AWS_WEB_IDENTITY_TOKEN_FILE
+        value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+      envFrom:
+      - secretRef:
+          name: orchestrator-secrets
+          optional: true
+      image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8000
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: orchestrator
+      ports:
+      - containerPort: 8000
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8000
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "4"
+          memory: 4Gi
+        requests:
+          cpu: "1"
+          memory: 2Gi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-mn5rq
+        readOnly: true
+      - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+        name: aws-iam-token
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: i-003383a39f494163c
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: orchestrator-sa
+    serviceAccountName: orchestrator-sa
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: CriticalAddonsOnly
+      operator: Exists
+    - effect: NoSchedule
+      key: karpenter.sh/disrupted
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: aws-iam-token
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            audience: sts.amazonaws.com
+            expirationSeconds: 86400
+            path: token
+    - name: kube-api-access-mn5rq
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T15:44:30Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T15:44:23Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T15:44:42Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T15:44:42Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T15:44:23Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: "1"
+        memory: 2Gi
+      containerID: containerd://d780681038b900cbf9c487794eda5ca73bb314f03b3eac9d8cb1cf018108454f
+      image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+      imageID: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator@sha256:12eaac61ac0579cd69da5a5229276390e1304e5a8569ea6fa490be8be352ba75
+      lastState: {}
+      name: orchestrator
+      ready: true
+      resources:
+        limits:
+          cpu: "4"
+          memory: 4Gi
+        requests:
+          cpu: "1"
+          memory: 2Gi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-01-29T15:44:30Z"
+      user:
+        linux:
+          gid: 0
+          supplementalGroups:
+          - 0
+          uid: 0
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-mn5rq
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+        name: aws-iam-token
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 172.31.66.12
+    hostIPs:
+    - ip: 172.31.66.12
+    observedGeneration: 1
+    phase: Running
+    podIP: 172.31.77.33
+    podIPs:
+    - ip: 172.31.77.33
+    qosClass: Burstable
+    startTime: "2026-01-29T15:44:23Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/restartedAt: "2026-01-29T11:19:58+05:30"
+    creationTimestamp: "2026-01-29T09:13:22Z"
+    generateName: rag-service-595cb99d97-
+    generation: 1
+    labels:
+      app: rag-service
+      pod-template-hash: 595cb99d97
+    name: rag-service-595cb99d97-dq2rp
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: rag-service-595cb99d97
+      uid: e3cd1362-f57b-4cce-a323-33d6588dd026
+    resourceVersion: "397314"
+    uid: af42c944-17b6-40de-ab37-a8ef11aaf519
+  spec:
+    containers:
+    - env:
+      - name: AWS_REGION
+        value: us-east-1
+      - name: SECRETS_MANAGER_SECRET_NAME
+        value: multitenant-chatbot-secrets1
+      - name: VECTOR_DB_PATH
+        value: /data/faiss
+      - name: AWS_STS_REGIONAL_ENDPOINTS
+        value: regional
+      - name: AWS_ROLE_ARN
+        value: arn:aws:iam::026544696832:role/multitenant-chatbot-rag-role
+      - name: AWS_WEB_IDENTITY_TOKEN_FILE
+        value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+      envFrom:
+      - secretRef:
+          name: rag-secrets
+          optional: true
+      image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8000
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: rag
+      ports:
+      - containerPort: 8000
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8000
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "2"
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /data/faiss
+        name: vector-db
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-lhkgn
+        readOnly: true
+      - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+        name: aws-iam-token
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: i-01dc76a1764622ba8
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: rag-sa
+    serviceAccountName: rag-sa
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: CriticalAddonsOnly
+      operator: Exists
+    - effect: NoSchedule
+      key: karpenter.sh/disrupted
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: aws-iam-token
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            audience: sts.amazonaws.com
+            expirationSeconds: 86400
+            path: token
+    - emptyDir: {}
+      name: vector-db
+    - name: kube-api-access-lhkgn
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T09:13:31Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T09:13:22Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T09:13:43Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T09:13:43Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T09:13:22Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 500m
+        memory: 1Gi
+      containerID: containerd://1938f57a2a3f3fe30c10a0da6bc062894c40a341bb79dbd6b7881880194dee7d
+      image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+      imageID: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service@sha256:6a51272038994dc67a651a0f6260e79794ff70ba38589aa8f4388d31718761a5
+      lastState: {}
+      name: rag
+      ready: true
+      resources:
+        limits:
+          cpu: "2"
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-01-29T09:13:31Z"
+      user:
+        linux:
+          gid: 0
+          supplementalGroups:
+          - 0
+          uid: 0
+      volumeMounts:
+      - mountPath: /data/faiss
+        name: vector-db
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-lhkgn
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+        name: aws-iam-token
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 172.31.31.188
+    hostIPs:
+    - ip: 172.31.31.188
+    observedGeneration: 1
+    phase: Running
+    podIP: 172.31.16.225
+    podIPs:
+    - ip: 172.31.16.225
+    qosClass: Burstable
+    startTime: "2026-01-29T09:13:22Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/restartedAt: "2026-01-29T15:43:21+05:30"
+    creationTimestamp: "2026-01-29T10:13:41Z"
+    generateName: request-router-5db86788f4-
+    generation: 1
+    labels:
+      app: request-router
+      pod-template-hash: 5db86788f4
+    name: request-router-5db86788f4-ccgwv
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: request-router-5db86788f4
+      uid: d11b841c-afa6-49e5-9a96-eb6e041a957e
+    resourceVersion: "416787"
+    uid: 1cd22304-f566-4afd-ab9f-f09e4e86df2b
+  spec:
+    containers:
+    - env:
+      - name: ORCHESTRATOR_URL
+        value: http://orchestrator-service:8000
+      - name: AWS_REGION
+        value: us-east-1
+      - name: SECRETS_MANAGER_SECRET_NAME
+        value: multitenant-chatbot-secrets1
+      - name: AWS_STS_REGIONAL_ENDPOINTS
+        value: regional
+      - name: AWS_ROLE_ARN
+        value: arn:aws:iam::026544696832:role/multitenant-chatbot-request-router-role
+      - name: AWS_WEB_IDENTITY_TOKEN_FILE
+        value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+      image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8000
+          scheme: HTTP
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: router
+      ports:
+      - containerPort: 8000
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8000
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "2"
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-qjz88
+        readOnly: true
+      - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+        name: aws-iam-token
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: i-01dc76a1764622ba8
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: request-router-sa
+    serviceAccountName: request-router-sa
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoSchedule
+      key: CriticalAddonsOnly
+      operator: Exists
+    - effect: NoSchedule
+      key: karpenter.sh/disrupted
+      operator: Exists
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: aws-iam-token
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            audience: sts.amazonaws.com
+            expirationSeconds: 86400
+            path: token
+    - name: kube-api-access-qjz88
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T10:13:48Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T10:13:41Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T10:14:00Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T10:14:00Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-01-29T10:13:41Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 500m
+        memory: 512Mi
+      containerID: containerd://5fec6395fe9b59ee7c8da94244a0a9190c0efcf94cbc6c56cb8776c73aee0287
+      image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+      imageID: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router@sha256:0f9e995dd784978dde4ad9fcc493f2f3878116a8702365089dc2c9b4a7fce50f
+      lastState: {}
+      name: router
+      ready: true
+      resources:
+        limits:
+          cpu: "2"
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-01-29T10:13:48Z"
+      user:
+        linux:
+          gid: 0
+          supplementalGroups:
+          - 0
+          uid: 0
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-qjz88
+        readOnly: true
+        recursiveReadOnly: Disabled
+      - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+        name: aws-iam-token
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 172.31.31.188
+    hostIPs:
+    - ip: 172.31.31.188
+    observedGeneration: 1
+    phase: Running
+    podIP: 172.31.16.226
+    podIPs:
+    - ip: 172.31.16.226
+    qosClass: Burstable
+    startTime: "2026-01-29T10:13:41Z"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"orchestrator-service","namespace":"multi-tenant-chatbot"},"spec":{"ports":[{"port":8000,"targetPort":8000}],"selector":{"app":"orchestrator"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-01-28T17:14:13Z"
+    name: orchestrator-service
+    namespace: multi-tenant-chatbot
+    resourceVersion: "89087"
+    uid: 372ec02a-4854-4918-b973-027790425aa3
+  spec:
+    clusterIP: 10.100.68.106
+    clusterIPs:
+    - 10.100.68.106
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 8000
+      protocol: TCP
+      targetPort: 8000
+    selector:
+      app: orchestrator
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"rag-service","namespace":"multi-tenant-chatbot"},"spec":{"ports":[{"port":8000,"targetPort":8000}],"selector":{"app":"rag-service"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-01-28T17:14:05Z"
+    name: rag-service
+    namespace: multi-tenant-chatbot
+    resourceVersion: "89025"
+    uid: 5f2b2af8-9dd3-48d4-b775-e2acb64afb4e
+  spec:
+    clusterIP: 10.100.212.200
+    clusterIPs:
+    - 10.100.212.200
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 8000
+      protocol: TCP
+      targetPort: 8000
+    selector:
+      app: rag-service
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"request-router-service","namespace":"multi-tenant-chatbot"},"spec":{"ports":[{"port":8000,"targetPort":8000}],"selector":{"app":"request-router"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-01-28T17:14:20Z"
+    name: request-router-service
+    namespace: multi-tenant-chatbot
+    resourceVersion: "89144"
+    uid: 646d149f-2fa0-44f8-a67d-5eb7aaebc0d5
+  spec:
+    clusterIP: 10.100.242.138
+    clusterIPs:
+    - 10.100.242.138
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 8000
+      protocol: TCP
+      targetPort: 8000
+    selector:
+      app: request-router
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"vllm-service","namespace":"multi-tenant-chatbot"},"spec":{"ports":[{"port":8000,"targetPort":8000}],"selector":{"app":"vllm-inference"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-01-28T17:13:57Z"
+    name: vllm-service
+    namespace: multi-tenant-chatbot
+    resourceVersion: "88966"
+    uid: ef439f74-e841-461a-92bc-afbac9c91312
+  spec:
+    clusterIP: 10.100.235.13
+    clusterIPs:
+    - 10.100.235.13
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 8000
+      protocol: TCP
+      targetPort: 8000
+    selector:
+      app: vllm-inference
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "12"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"orchestrator","namespace":"multi-tenant-chatbot"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"orchestrator"}},"template":{"metadata":{"labels":{"app":"orchestrator"}},"spec":{"containers":[{"env":[{"name":"RAG_SERVICE_URL","value":"http://rag-service:8000"},{"name":"VLLM_SERVICE_URL","value":"http://vllm-service:8000"},{"name":"AWS_REGION","value":"us-east-1"},{"name":"SECRETS_MANAGER_SECRET_NAME","value":"multitenant-chatbot-secrets1"}],"envFrom":[{"secretRef":{"name":"orchestrator-secrets","optional":true}}],"image":"026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest","livenessProbe":{"httpGet":{"path":"/health","port":8000},"initialDelaySeconds":30,"periodSeconds":10},"name":"orchestrator","ports":[{"containerPort":8000}],"readinessProbe":{"httpGet":{"path":"/health","port":8000},"initialDelaySeconds":10,"periodSeconds":5},"resources":{"limits":{"cpu":"4000m","memory":"4Gi"},"requests":{"cpu":"1000m","memory":"2Gi"}}}],"serviceAccountName":"orchestrator-sa","tolerations":[{"effect":"NoSchedule","key":"CriticalAddonsOnly","operator":"Exists"},{"effect":"NoSchedule","key":"karpenter.sh/disrupted","operator":"Exists"}]}}}}
+    creationTimestamp: "2026-01-28T17:14:12Z"
+    generation: 14
+    name: orchestrator
+    namespace: multi-tenant-chatbot
+    resourceVersion: "522609"
+    uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: orchestrator
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T15:47:56+05:30"
+        labels:
+          app: orchestrator
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-28T17:39:42Z"
+      lastUpdateTime: "2026-01-29T10:19:49Z"
+      message: ReplicaSet "orchestrator-755465f57d" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-01-29T15:44:42Z"
+      lastUpdateTime: "2026-01-29T15:44:42Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 14
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "11"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"rag-service","namespace":"multi-tenant-chatbot"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"rag-service"}},"template":{"metadata":{"labels":{"app":"rag-service"}},"spec":{"containers":[{"env":[{"name":"AWS_REGION","value":"us-east-1"},{"name":"SECRETS_MANAGER_SECRET_NAME","value":"multitenant-chatbot-secrets1"},{"name":"VECTOR_DB_PATH","value":"/data/faiss"}],"envFrom":[{"secretRef":{"name":"rag-secrets","optional":true}}],"image":"026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest","livenessProbe":{"httpGet":{"path":"/health","port":8000},"initialDelaySeconds":30,"periodSeconds":10},"name":"rag","ports":[{"containerPort":8000}],"readinessProbe":{"httpGet":{"path":"/health","port":8000},"initialDelaySeconds":10,"periodSeconds":5},"resources":{"limits":{"cpu":"2000m","memory":"2Gi"},"requests":{"cpu":"500m","memory":"1Gi"}},"volumeMounts":[{"mountPath":"/data/faiss","name":"vector-db"}]}],"serviceAccountName":"rag-sa","tolerations":[{"effect":"NoSchedule","key":"CriticalAddonsOnly","operator":"Exists"},{"effect":"NoSchedule","key":"karpenter.sh/disrupted","operator":"Exists"}],"volumes":[{"emptyDir":{},"name":"vector-db"}]}}}}
+    creationTimestamp: "2026-01-28T17:14:04Z"
+    generation: 13
+    name: rag-service
+    namespace: multi-tenant-chatbot
+    resourceVersion: "397318"
+    uid: d43086b7-c6dd-4104-accf-62797e162012
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: rag-service
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T11:19:58+05:30"
+        labels:
+          app: rag-service
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+        volumes:
+        - emptyDir: {}
+          name: vector-db
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-29T05:17:28Z"
+      lastUpdateTime: "2026-01-29T05:50:42Z"
+      message: ReplicaSet "rag-service-595cb99d97" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-01-29T09:13:43Z"
+      lastUpdateTime: "2026-01-29T09:13:43Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 13
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "8"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"request-router","namespace":"multi-tenant-chatbot"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"request-router"}},"template":{"metadata":{"labels":{"app":"request-router"}},"spec":{"containers":[{"env":[{"name":"ORCHESTRATOR_URL","value":"http://orchestrator-service:8000"},{"name":"AWS_REGION","value":"us-east-1"},{"name":"SECRETS_MANAGER_SECRET_NAME","value":"multitenant-chatbot-secrets1"}],"image":"026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest","livenessProbe":{"httpGet":{"path":"/health","port":8000},"initialDelaySeconds":30,"periodSeconds":10},"name":"router","ports":[{"containerPort":8000}],"readinessProbe":{"httpGet":{"path":"/health","port":8000},"initialDelaySeconds":10,"periodSeconds":5},"resources":{"limits":{"cpu":"2000m","memory":"2Gi"},"requests":{"cpu":"500m","memory":"512Mi"}}}],"serviceAccountName":"request-router-sa","tolerations":[{"effect":"NoSchedule","key":"CriticalAddonsOnly","operator":"Exists"},{"effect":"NoSchedule","key":"karpenter.sh/disrupted","operator":"Exists"}]}}}}
+    creationTimestamp: "2026-01-28T17:14:20Z"
+    generation: 10
+    name: request-router
+    namespace: multi-tenant-chatbot
+    resourceVersion: "416804"
+    uid: 0b1e3f74-535b-4749-bf76-477ae4e4a9e3
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: request-router
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T15:43:21+05:30"
+        labels:
+          app: request-router
+      spec:
+        containers:
+        - env:
+          - name: ORCHESTRATOR_URL
+            value: http://orchestrator-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: request-router-sa
+        serviceAccountName: request-router-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-29T04:59:59Z"
+      lastUpdateTime: "2026-01-29T04:59:59Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-28T17:42:39Z"
+      lastUpdateTime: "2026-01-29T10:14:00Z"
+      message: ReplicaSet "request-router-5db86788f4" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 10
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"vllm-inference","namespace":"multi-tenant-chatbot"},"spec":{"replicas":0,"selector":{"matchLabels":{"app":"vllm-inference"}},"template":{"metadata":{"labels":{"app":"vllm-inference"}},"spec":{"containers":[{"env":[{"name":"MODEL_NAME","value":"mistralai/Mistral-7B-Instruct-v0.2"},{"name":"TENSOR_PARALLEL_SIZE","value":"1"},{"name":"MAX_MODEL_LEN","value":"4096"}],"image":"vllm/vllm-openai:latest","livenessProbe":{"httpGet":{"path":"/health","port":8000},"initialDelaySeconds":60,"periodSeconds":30},"name":"vllm","ports":[{"containerPort":8000}],"readinessProbe":{"httpGet":{"path":"/health","port":8000},"initialDelaySeconds":30,"periodSeconds":10},"resources":{"limits":{"cpu":"4000m","memory":"16Gi","nvidia.com/gpu":1},"requests":{"cpu":"2000m","memory":"12Gi","nvidia.com/gpu":1}}}],"nodeSelector":{"accelerator":"nvidia-tesla-t4","node-type":"gpu"},"serviceAccountName":"vllm-sa"}}}}
+    creationTimestamp: "2026-01-28T17:13:56Z"
+    generation: 2
+    name: vllm-inference
+    namespace: multi-tenant-chatbot
+    resourceVersion: "106741"
+    uid: 9ac0a88e-f04f-4407-90e6-b2c9498e31ea
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 0
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: vllm-inference
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: vllm-inference
+      spec:
+        containers:
+        - env:
+          - name: MODEL_NAME
+            value: mistralai/Mistral-7B-Instruct-v0.2
+          - name: TENSOR_PARALLEL_SIZE
+            value: "1"
+          - name: MAX_MODEL_LEN
+            value: "4096"
+          image: vllm/vllm-openai:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: vllm
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 16Gi
+              nvidia.com/gpu: "1"
+            requests:
+              cpu: "2"
+              memory: 12Gi
+              nvidia.com/gpu: "1"
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          accelerator: nvidia-tesla-t4
+          node-type: gpu
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: vllm-sa
+        serviceAccountName: vllm-sa
+        terminationGracePeriodSeconds: 30
+  status:
+    conditions:
+    - lastTransitionTime: "2026-01-28T17:52:26Z"
+      lastUpdateTime: "2026-01-28T17:52:26Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-28T17:52:27Z"
+      lastUpdateTime: "2026-01-28T17:52:27Z"
+      message: ReplicaSet "vllm-inference-5868d99dcd" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 2
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "11"
+    creationTimestamp: "2026-01-29T10:13:35Z"
+    generation: 2
+    labels:
+      app: orchestrator
+      pod-template-hash: 54486dfb55
+    name: orchestrator-54486dfb55
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "418169"
+    uid: 389c2e2e-73bd-4b65-8c7b-647257cbf9f5
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: 54486dfb55
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T15:43:15+05:30"
+        labels:
+          app: orchestrator
+          pod-template-hash: 54486dfb55
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+    creationTimestamp: "2026-01-28T17:42:50Z"
+    generation: 3
+    labels:
+      app: orchestrator
+      pod-template-hash: 5cfdd5447b
+    name: orchestrator-5cfdd5447b
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "100489"
+    uid: 1ab7c72b-885e-4f8b-82cc-09ce45419fe4
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: 5cfdd5447b
+    template:
+      metadata:
+        labels:
+          app: orchestrator
+          pod-template-hash: 5cfdd5447b
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "4"
+    creationTimestamp: "2026-01-28T17:48:01Z"
+    generation: 4
+    labels:
+      app: orchestrator
+      pod-template-hash: 7454b8d547
+    name: orchestrator-7454b8d547
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "324548"
+    uid: f62b224c-9128-447a-aa5a-98c8ce5cde2a
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: 7454b8d547
+    template:
+      metadata:
+        labels:
+          app: orchestrator
+          pod-template-hash: 7454b8d547
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 4
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "12"
+    creationTimestamp: "2026-01-29T10:18:16Z"
+    generation: 2
+    labels:
+      app: orchestrator
+      pod-template-hash: 755465f57d
+    name: orchestrator-755465f57d
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "522607"
+    uid: ba8bc974-c9ab-4d1d-8642-4be8c291fe03
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: 755465f57d
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T15:47:56+05:30"
+        labels:
+          app: orchestrator
+          pod-template-hash: 755465f57d
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "7"
+    creationTimestamp: "2026-01-29T05:50:12Z"
+    generation: 2
+    labels:
+      app: orchestrator
+      pod-template-hash: 7c65d5f8f5
+    name: orchestrator-7c65d5f8f5
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "394225"
+    uid: 0c21f2b8-1b34-4ae0-8e36-c0a41381b6cb
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: 7c65d5f8f5
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T11:19:52+05:30"
+        labels:
+          app: orchestrator
+          pod-template-hash: 7c65d5f8f5
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "6"
+    creationTimestamp: "2026-01-29T05:49:53Z"
+    generation: 2
+    labels:
+      app: orchestrator
+      pod-template-hash: 7c7947697c
+    name: orchestrator-7c7947697c
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "332915"
+    uid: 0e9cfef5-985f-4b37-9f8e-eb2f31681c30
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: 7c7947697c
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T10:57:48+05:30"
+        labels:
+          app: orchestrator
+          pod-template-hash: 7c7947697c
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "5"
+    creationTimestamp: "2026-01-29T05:28:08Z"
+    generation: 2
+    labels:
+      app: orchestrator
+      pod-template-hash: 85db6f5978
+    name: orchestrator-85db6f5978
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "331533"
+    uid: f10b31c8-c33a-4c9d-978f-bc1a35d49ba4
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: 85db6f5978
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T10:57:48+05:30"
+        labels:
+          app: orchestrator
+          pod-template-hash: 85db6f5978
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "9"
+    creationTimestamp: "2026-01-29T09:10:24Z"
+    generation: 2
+    labels:
+      app: orchestrator
+      pod-template-hash: 85fcc7b996
+    name: orchestrator-85fcc7b996
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "402943"
+    uid: 7585e55c-a643-4902-a0cd-e5e0a7959d17
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: 85fcc7b996
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T14:40:03+05:30"
+        labels:
+          app: orchestrator
+          pod-template-hash: 85fcc7b996
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "8"
+    creationTimestamp: "2026-01-29T09:01:16Z"
+    generation: 2
+    labels:
+      app: orchestrator
+      pod-template-hash: 97667d9d7
+    name: orchestrator-97667d9d7
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "396233"
+    uid: f07eccfe-72f7-44cb-abc2-a7f03f23d47b
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: 97667d9d7
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T14:30:56+05:30"
+        labels:
+          app: orchestrator
+          pod-template-hash: 97667d9d7
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "10"
+    creationTimestamp: "2026-01-29T09:25:41Z"
+    generation: 2
+    labels:
+      app: orchestrator
+      pod-template-hash: b5487686b
+    name: orchestrator-b5487686b
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "418764"
+    uid: 50bf1234-04af-4810-b64a-c5fd8dac430c
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: b5487686b
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T14:55:21+05:30"
+        labels:
+          app: orchestrator
+          pod-template-hash: b5487686b
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+    creationTimestamp: "2026-01-28T17:39:42Z"
+    generation: 2
+    labels:
+      app: orchestrator
+      pod-template-hash: db498f8ff
+    name: orchestrator-db498f8ff
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: orchestrator
+      uid: 4103e437-bc14-4e8e-bceb-b05c3a9cff40
+    resourceVersion: "98711"
+    uid: b28b76c3-449d-467f-9a98-87ab8dd26151
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: orchestrator
+        pod-template-hash: db498f8ff
+    template:
+      metadata:
+        labels:
+          app: orchestrator
+          pod-template-hash: db498f8ff
+      spec:
+        containers:
+        - env:
+          - name: RAG_SERVICE_URL
+            value: http://rag-service:8000
+          - name: VLLM_SERVICE_URL
+            value: http://vllm-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          envFrom:
+          - secretRef:
+              name: orchestrator-secrets
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-orchestrator:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: orchestrator
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: orchestrator-sa
+        serviceAccountName: orchestrator-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: node.kubernetes.io/not-ready
+          operator: Exists
+        - effect: NoSchedule
+          key: node.kubernetes.io/unreachable
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2026-01-28T17:14:04Z"
+    generation: 2
+    labels:
+      app: rag-service
+      pod-template-hash: 54d944c558
+    name: rag-service-54d944c558
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "98593"
+    uid: 5642642f-32a8-4191-a0d3-42f7b2bd2d59
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: 54d944c558
+    template:
+      metadata:
+        labels:
+          app: rag-service
+          pod-template-hash: 54d944c558
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 8Gi
+            requests:
+              cpu: "1"
+              memory: 4Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          node-type: cpu
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: vector-db
+          persistentVolumeClaim:
+            claimName: vector-db-pvc
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "7"
+    creationTimestamp: "2026-01-29T05:04:50Z"
+    generation: 2
+    labels:
+      app: rag-service
+      pod-template-hash: 55849cbb6f
+    name: rag-service-55849cbb6f
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "320987"
+    uid: 64393d04-e5b5-4453-a769-b647143686aa
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: 55849cbb6f
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-28T23:29:21+05:30"
+        labels:
+          app: rag-service
+          pod-template-hash: 55849cbb6f
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+        volumes:
+        - emptyDir: {}
+          name: vector-db
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "0"
+      deployment.kubernetes.io/max-replicas: "0"
+      deployment.kubernetes.io/revision: "5"
+    creationTimestamp: "2026-01-28T17:52:15Z"
+    generation: 3
+    labels:
+      app: rag-service
+      pod-template-hash: 5897b4f5b4
+    name: rag-service-5897b4f5b4
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "106680"
+    uid: 15d93f1a-1a13-43f8-8fe1-64cf3b39bcef
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: 5897b4f5b4
+    template:
+      metadata:
+        labels:
+          app: rag-service
+          pod-template-hash: 5897b4f5b4
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+        volumes:
+        - name: vector-db
+          persistentVolumeClaim:
+            claimName: vector-db-pvc
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "11"
+    creationTimestamp: "2026-01-29T05:50:18Z"
+    generation: 2
+    labels:
+      app: rag-service
+      pod-template-hash: 595cb99d97
+    name: rag-service-595cb99d97
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "397315"
+    uid: e3cd1362-f57b-4cce-a323-33d6588dd026
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: 595cb99d97
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T11:19:58+05:30"
+        labels:
+          app: rag-service
+          pod-template-hash: 595cb99d97
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+        volumes:
+        - emptyDir: {}
+          name: vector-db
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+    creationTimestamp: "2026-01-28T17:39:49Z"
+    generation: 2
+    labels:
+      app: rag-service
+      pod-template-hash: 5cb49988bd
+    name: rag-service-5cb49988bd
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "100401"
+    uid: 47264a56-3994-4170-8672-d00a1f40c86e
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: 5cb49988bd
+    template:
+      metadata:
+        labels:
+          app: rag-service
+          pod-template-hash: 5cb49988bd
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 8Gi
+            requests:
+              cpu: "1"
+              memory: 4Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: node.kubernetes.io/not-ready
+          operator: Exists
+        - effect: NoSchedule
+          key: node.kubernetes.io/unreachable
+          operator: Exists
+        volumes:
+        - name: vector-db
+          persistentVolumeClaim:
+            claimName: vector-db-pvc
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "10"
+    creationTimestamp: "2026-01-29T05:50:00Z"
+    generation: 2
+    labels:
+      app: rag-service
+      pod-template-hash: 5cb8bb7644
+    name: rag-service-5cb8bb7644
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "331601"
+    uid: 322e27df-df43-4694-b734-d4e026298dc8
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: 5cb8bb7644
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T10:47:08+05:30"
+        labels:
+          app: rag-service
+          pod-template-hash: 5cb8bb7644
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+        volumes:
+        - emptyDir: {}
+          name: vector-db
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "9"
+    creationTimestamp: "2026-01-29T05:17:28Z"
+    generation: 3
+    labels:
+      app: rag-service
+      pod-template-hash: 5dd96d4b9c
+    name: rag-service-5dd96d4b9c
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "331815"
+    uid: ef8282f6-ae68-47c2-a374-91aa9e127918
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: 5dd96d4b9c
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T10:47:08+05:30"
+        labels:
+          app: rag-service
+          pod-template-hash: 5dd96d4b9c
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+        volumes:
+        - emptyDir: {}
+          name: vector-db
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "6"
+    creationTimestamp: "2026-01-28T17:59:39Z"
+    generation: 5
+    labels:
+      app: rag-service
+      pod-template-hash: 75db99d8f8
+    name: rag-service-75db99d8f8
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "317368"
+    uid: 61959f00-310a-4cd0-948a-988e44e87a2d
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: 75db99d8f8
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-28T23:29:21+05:30"
+        labels:
+          app: rag-service
+          pod-template-hash: 75db99d8f8
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+        volumes:
+        - name: vector-db
+          persistentVolumeClaim:
+            claimName: vector-db-pvc
+  status:
+    observedGeneration: 5
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "4"
+    creationTimestamp: "2026-01-28T17:48:08Z"
+    generation: 3
+    labels:
+      app: rag-service
+      pod-template-hash: 76859475c4
+    name: rag-service-76859475c4
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "104299"
+    uid: 566edfb5-9d72-4d24-a581-11714939f6ce
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: 76859475c4
+    template:
+      metadata:
+        labels:
+          app: rag-service
+          pod-template-hash: 76859475c4
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 8Gi
+            requests:
+              cpu: "1"
+              memory: 4Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+        volumes:
+        - name: vector-db
+          persistentVolumeClaim:
+            claimName: vector-db-pvc
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "8"
+    creationTimestamp: "2026-01-29T05:06:30Z"
+    generation: 3
+    labels:
+      app: rag-service
+      pod-template-hash: 7b87d575dc
+    name: rag-service-7b87d575dc
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "321140"
+    uid: cdfa5b8a-8c56-4b82-9be1-c599b7bb718a
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: 7b87d575dc
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-28T23:29:21+05:30"
+        labels:
+          app: rag-service
+          pod-template-hash: 7b87d575dc
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+              optional: true
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+        volumes:
+        - emptyDir: {}
+          name: vector-db
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+    creationTimestamp: "2026-01-28T17:43:01Z"
+    generation: 3
+    labels:
+      app: rag-service
+      pod-template-hash: d7c5b44d7
+    name: rag-service-d7c5b44d7
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: rag-service
+      uid: d43086b7-c6dd-4104-accf-62797e162012
+    resourceVersion: "101802"
+    uid: 2c7ac671-a3a3-476c-b0fa-568a0b00e55a
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: rag-service
+        pod-template-hash: d7c5b44d7
+    template:
+      metadata:
+        labels:
+          app: rag-service
+          pod-template-hash: d7c5b44d7
+      spec:
+        containers:
+        - env:
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          - name: VECTOR_DB_PATH
+            value: /data/faiss
+          envFrom:
+          - secretRef:
+              name: rag-secrets
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-rag-service:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: rag
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 8Gi
+            requests:
+              cpu: "1"
+              memory: 4Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data/faiss
+            name: vector-db
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: rag-sa
+        serviceAccountName: rag-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+        volumes:
+        - name: vector-db
+          persistentVolumeClaim:
+            claimName: vector-db-pvc
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "4"
+    creationTimestamp: "2026-01-29T05:50:07Z"
+    generation: 2
+    labels:
+      app: request-router
+      pod-template-hash: 564bf9fdf7
+    name: request-router-564bf9fdf7
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: request-router
+      uid: 0b1e3f74-535b-4749-bf76-477ae4e4a9e3
+    resourceVersion: "331682"
+    uid: 0feb214f-420d-4bff-b323-3e583ff90c6a
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: request-router
+        pod-template-hash: 564bf9fdf7
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-28T23:00:50+05:30"
+        labels:
+          app: request-router
+          pod-template-hash: 564bf9fdf7
+      spec:
+        containers:
+        - env:
+          - name: ORCHESTRATOR_URL
+            value: http://orchestrator-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: request-router-sa
+        serviceAccountName: request-router-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "5"
+    creationTimestamp: "2026-01-29T05:50:26Z"
+    generation: 3
+    labels:
+      app: request-router
+      pod-template-hash: 58bc58b976
+    name: request-router-58bc58b976
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: request-router
+      uid: 0b1e3f74-535b-4749-bf76-477ae4e4a9e3
+    resourceVersion: "401306"
+    uid: d764db28-c72f-43af-8e85-2407716c5a06
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: request-router
+        pod-template-hash: 58bc58b976
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T11:20:06+05:30"
+        labels:
+          app: request-router
+          pod-template-hash: 58bc58b976
+      spec:
+        containers:
+        - env:
+          - name: ORCHESTRATOR_URL
+            value: http://orchestrator-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: request-router-sa
+        serviceAccountName: request-router-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 3
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "8"
+    creationTimestamp: "2026-01-29T10:13:41Z"
+    generation: 1
+    labels:
+      app: request-router
+      pod-template-hash: 5db86788f4
+    name: request-router-5db86788f4
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: request-router
+      uid: 0b1e3f74-535b-4749-bf76-477ae4e4a9e3
+    resourceVersion: "416788"
+    uid: d11b841c-afa6-49e5-9a96-eb6e041a957e
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: request-router
+        pod-template-hash: 5db86788f4
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T15:43:21+05:30"
+        labels:
+          app: request-router
+          pod-template-hash: 5db86788f4
+      spec:
+        containers:
+        - env:
+          - name: ORCHESTRATOR_URL
+            value: http://orchestrator-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: request-router-sa
+        serviceAccountName: request-router-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    availableReplicas: 1
+    fullyLabeledReplicas: 1
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "7"
+    creationTimestamp: "2026-01-29T09:43:59Z"
+    generation: 2
+    labels:
+      app: request-router
+      pod-template-hash: 6bc6db688d
+    name: request-router-6bc6db688d
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: request-router
+      uid: 0b1e3f74-535b-4749-bf76-477ae4e4a9e3
+    resourceVersion: "416802"
+    uid: 8121641c-0ab3-465a-9b63-3990b4ab3312
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: request-router
+        pod-template-hash: 6bc6db688d
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T15:13:39+05:30"
+        labels:
+          app: request-router
+          pod-template-hash: 6bc6db688d
+      spec:
+        containers:
+        - env:
+          - name: ORCHESTRATOR_URL
+            value: http://orchestrator-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: request-router-sa
+        serviceAccountName: request-router-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "6"
+    creationTimestamp: "2026-01-29T09:25:50Z"
+    generation: 2
+    labels:
+      app: request-router
+      pod-template-hash: 6bfdf65d66
+    name: request-router-6bfdf65d66
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: request-router
+      uid: 0b1e3f74-535b-4749-bf76-477ae4e4a9e3
+    resourceVersion: "407310"
+    uid: 4630c61e-422e-4bfe-aae5-6c784623d594
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: request-router
+        pod-template-hash: 6bfdf65d66
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-29T14:55:30+05:30"
+        labels:
+          app: request-router
+          pod-template-hash: 6bfdf65d66
+      spec:
+        containers:
+        - env:
+          - name: ORCHESTRATOR_URL
+            value: http://orchestrator-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets1
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: request-router-sa
+        serviceAccountName: request-router-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2026-01-28T17:14:20Z"
+    generation: 2
+    labels:
+      app: request-router
+      pod-template-hash: 77644f9cdb
+    name: request-router-77644f9cdb
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: request-router
+      uid: 0b1e3f74-535b-4749-bf76-477ae4e4a9e3
+    resourceVersion: "98369"
+    uid: 310972d8-2d3a-4003-8154-18c7ce10bc85
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: request-router
+        pod-template-hash: 77644f9cdb
+    template:
+      metadata:
+        labels:
+          app: request-router
+          pod-template-hash: 77644f9cdb
+      spec:
+        containers:
+        - env:
+          - name: ORCHESTRATOR_URL
+            value: http://orchestrator-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          node-type: cpu
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: request-router-sa
+        serviceAccountName: request-router-sa
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "3"
+    creationTimestamp: "2026-01-28T17:42:39Z"
+    generation: 5
+    labels:
+      app: request-router
+      pod-template-hash: 7dd8b8b68b
+    name: request-router-7dd8b8b68b
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: request-router
+      uid: 0b1e3f74-535b-4749-bf76-477ae4e4a9e3
+    resourceVersion: "331930"
+    uid: 77a39d34-10c1-45b0-8d4d-1c8df1ee084d
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: request-router
+        pod-template-hash: 7dd8b8b68b
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-28T23:00:50+05:30"
+        labels:
+          app: request-router
+          pod-template-hash: 7dd8b8b68b
+      spec:
+        containers:
+        - env:
+          - name: ORCHESTRATOR_URL
+            value: http://orchestrator-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: request-router-sa
+        serviceAccountName: request-router-sa
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - effect: NoSchedule
+          key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: karpenter.sh/disrupted
+          operator: Exists
+  status:
+    observedGeneration: 5
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "1"
+      deployment.kubernetes.io/max-replicas: "2"
+      deployment.kubernetes.io/revision: "2"
+    creationTimestamp: "2026-01-28T17:31:08Z"
+    generation: 2
+    labels:
+      app: request-router
+      pod-template-hash: 85896bf6f
+    name: request-router-85896bf6f
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: request-router
+      uid: 0b1e3f74-535b-4749-bf76-477ae4e4a9e3
+    resourceVersion: "98565"
+    uid: 6c6e8451-21c2-4625-9082-be46de17ea5a
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: request-router
+        pod-template-hash: 85896bf6f
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-01-28T23:00:50+05:30"
+        labels:
+          app: request-router
+          pod-template-hash: 85896bf6f
+      spec:
+        containers:
+        - env:
+          - name: ORCHESTRATOR_URL
+            value: http://orchestrator-service:8000
+          - name: AWS_REGION
+            value: us-east-1
+          - name: SECRETS_MANAGER_SECRET_NAME
+            value: multitenant-chatbot-secrets
+          image: 026544696832.dkr.ecr.us-east-1.amazonaws.com/multitenant-chatbot-request-router:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: router
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          node-type: cpu
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: request-router-sa
+        serviceAccountName: request-router-sa
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "0"
+      deployment.kubernetes.io/max-replicas: "0"
+      deployment.kubernetes.io/revision: "1"
+    creationTimestamp: "2026-01-28T17:13:56Z"
+    generation: 2
+    labels:
+      app: vllm-inference
+      pod-template-hash: 5868d99dcd
+    name: vllm-inference-5868d99dcd
+    namespace: multi-tenant-chatbot
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: vllm-inference
+      uid: 9ac0a88e-f04f-4407-90e6-b2c9498e31ea
+    resourceVersion: "101880"
+    uid: c0ab4e4f-3bb6-465b-806d-9cd4f2c982c4
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: vllm-inference
+        pod-template-hash: 5868d99dcd
+    template:
+      metadata:
+        labels:
+          app: vllm-inference
+          pod-template-hash: 5868d99dcd
+      spec:
+        containers:
+        - env:
+          - name: MODEL_NAME
+            value: mistralai/Mistral-7B-Instruct-v0.2
+          - name: TENSOR_PARALLEL_SIZE
+            value: "1"
+          - name: MAX_MODEL_LEN
+            value: "4096"
+          image: vllm/vllm-openai:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: vllm
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "4"
+              memory: 16Gi
+              nvidia.com/gpu: "1"
+            requests:
+              cpu: "2"
+              memory: 12Gi
+              nvidia.com/gpu: "1"
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          accelerator: nvidia-tesla-t4
+          node-type: gpu
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: vllm-sa
+        serviceAccountName: vllm-sa
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      alb.ingress.kubernetes.io/healthcheck-interval-seconds: "30"
+      alb.ingress.kubernetes.io/healthcheck-path: /health
+      alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "5"
+      alb.ingress.kubernetes.io/healthy-threshold-count: "2"
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+      alb.ingress.kubernetes.io/scheme: internal
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/unhealthy-threshold-count: "3"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"alb.ingress.kubernetes.io/healthcheck-interval-seconds":"30","alb.ingress.kubernetes.io/healthcheck-path":"/health","alb.ingress.kubernetes.io/healthcheck-timeout-seconds":"5","alb.ingress.kubernetes.io/healthy-threshold-count":"2","alb.ingress.kubernetes.io/listen-ports":"[{\"HTTP\": 80}]","alb.ingress.kubernetes.io/scheme":"internal","alb.ingress.kubernetes.io/target-type":"ip","alb.ingress.kubernetes.io/unhealthy-threshold-count":"3","kubernetes.io/ingress.class":"alb"},"name":"chatbot-ingress","namespace":"multi-tenant-chatbot"},"spec":{"ingressClassName":"alb","rules":[{"http":{"paths":[{"backend":{"service":{"name":"request-router-service","port":{"number":8000}}},"path":"/","pathType":"Prefix"}]}}]}}
+      kubernetes.io/ingress.class: alb
+    creationTimestamp: "2026-01-28T17:20:20Z"
+    generation: 1
+    name: chatbot-ingress
+    namespace: multi-tenant-chatbot
+    resourceVersion: "91091"
+    uid: c0c7600f-673b-409d-924a-1049b872a4ae
+  spec:
+    ingressClassName: alb
+    rules:
+    - http:
+        paths:
+        - backend:
+            service:
+              name: request-router-service
+              port:
+                number: 8000
+          path: /
+          pathType: Prefix
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIDBTCCAe2gAwIBAgIIRutU9XzsgHkwDQYJKoZIhvcNAQELBQAwFTETMBEGA1UE
+      AxMKa3ViZXJuZXRlczAeFw0yNjAxMjgxMjI4MDlaFw0zNjAxMjYxMjMzMDlaMBUx
+      EzARBgNVBAMTCmt1YmVybmV0ZXMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
+      AoIBAQDLHdRxa76Pv34Qz8b049LmdHjWn1HB2iOjYDK06M4wXJ704TEiCfv46ZpT
+      IVmz1AGJVNO4noUoMRd3JzY9sL8MQCYrJgvENax++JS+L7SLsguWuBGm5vy5vvWJ
+      btmdE8md+DkJBLac/zqpCVVbrowJFVmWHhycvD7PSdvubTcvG68jEauWCwynhptH
+      Mx7obQKVaLv7Wjl4qmQVXBcwmCLc3Wf9Ww3Msv7se8LLGG6fCmk9omBIyB1Xr1HM
+      m2ZGyG6ci2kDspOPh/9//rxoh6hnkurFrrNb7uny4X/Au11A+NLTFR6vKuDesSxH
+      NeztqueQwvZN2n20HfSL79tcTX6VAgMBAAGjWTBXMA4GA1UdDwEB/wQEAwICpDAP
+      BgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBS60XYTFao0OQitfi/UjM7X4go2nTAV
+      BgNVHREEDjAMggprdWJlcm5ldGVzMA0GCSqGSIb3DQEBCwUAA4IBAQCEeE9P1tIy
+      41K2D3d10EY8OjFsWrxt+q/BB178ASNzac3DOfRI3f3SGaKViROY5Ivw+VFNTSdS
+      +UCsmO1ApylIAqlsFjy2FK5um4gOOS4BTGdBfLahqqjRYOsQCIv2JmRhPYF9jEDx
+      +BLOpj4M27SWznJdgvS80ln24Jt6CILN96Ox5gt2CEWFyQHv6pmgAn3WJAORLrVb
+      1Zil8+1PzFERwBYISii9QP8kvxfIDzTPMKfE9gvx/ROpZp89pYV/DQ7o+nOVzDK/
+      Rom/5PpF068ggGU99SNcBOc6hdwrN0M8lG83BN0j59ulJa/z7zg5N6oQ+OJuhaWz
+      omHHd2cK5It/
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2026-01-28T17:13:22Z"
+    name: kube-root-ca.crt
+    namespace: multi-tenant-chatbot
+    resourceVersion: "88762"
+    uid: e1092cce-af8c-43c2-ac00-04c54b84105f
+- apiVersion: v1
+  data:
+    OPENAI_API_KEY: c2stcHJvai1sSW5qbGNoYTh4clE2cDl2ZG4zTW9ielpYbU5HLWotZTRnNThkNU9hczJ1a2VtUlItdV8xYlFvdnJXNW0xemxNTVpuOFRPUV9yZVQzQmxia0ZKMDNQb3ltMV9md292b0cyUnNpVWw4T3phZ3FRNmhXZll2SXJLNUk0dHMyTFVsOXA4RDQwalhhLVFyM284ZEIwSDlKNlZOVmdMZ0E=
+  kind: Secret
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","data":{"OPENAI_API_KEY":"c2stcHJvai1sSW5qbGNoYTh4clE2cDl2ZG4zTW9ielpYbU5HLWotZTRnNThkNU9hczJ1a2VtUlItdV8xYlFvdnJXNW0xemxNTVpuOFRPUV9yZVQzQmxia0ZKMDNQb3ltMV9md292b0cyUnNpVWw4T3phZ3FRNmhXZll2SXJLNUk0dHMyTFVsOXA4RDQwalhhLVFyM284ZEIwSDlKNlZOVmdMZ0E="},"kind":"Secret","metadata":{"annotations":{},"creationTimestamp":null,"name":"orchestrator-secrets","namespace":"multi-tenant-chatbot"}}
+    creationTimestamp: "2026-01-28T17:13:40Z"
+    name: orchestrator-secrets
+    namespace: multi-tenant-chatbot
+    resourceVersion: "324391"
+    uid: 100e7f39-f084-4759-acee-10dc55e6fdfa
+  type: Opaque
+- apiVersion: v1
+  data:
+    OPENAI_API_KEY: c2stcHJvai1nZTlYb1k3bVRyUW9oRVVSbURVR185aUVjYW9oLXdBR3ZWbjJNbVMxbW5qUkhRUmxBVklTUEdSNlI1eW9kN2RfS0JkeHZVTnR0eFQzQmxia0ZKa2RLQXFjMEdHY0ptNXJURTFxVHE4TkYyRm1IeEZrSTZTZkNTZkpRYUl2S3BJUUN3amtQSDhJcE5lQ3Ytc1JwSlZCZnJRck1ESUE=
+  kind: Secret
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","data":{"OPENAI_API_KEY":"c2stcHJvai1nZTlYb1k3bVRyUW9oRVVSbURVR185aUVjYW9oLXdBR3ZWbjJNbVMxbW5qUkhRUmxBVklTUEdSNlI1eW9kN2RfS0JkeHZVTnR0eFQzQmxia0ZKa2RLQXFjMEdHY0ptNXJURTFxVHE4TkYyRm1IeEZrSTZTZkNTZkpRYUl2S3BJUUN3amtQSDhJcE5lQ3Ytc1JwSlZCZnJRck1ESUE="},"kind":"Secret","metadata":{"annotations":{},"creationTimestamp":null,"name":"rag-secrets","namespace":"multi-tenant-chatbot"}}
+    creationTimestamp: "2026-01-28T17:13:49Z"
+    name: rag-secrets
+    namespace: multi-tenant-chatbot
+    resourceVersion: "88910"
+    uid: 6715248f-8b61-468f-9e3f-228c368102cc
+  type: Opaque
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    creationTimestamp: "2026-01-28T17:13:22Z"
+    name: default
+    namespace: multi-tenant-chatbot
+    resourceVersion: "88763"
+    uid: a728f2a6-8829-48c1-91d6-1f52b494987a
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::026544696832:role/multitenant-chatbot-orchestrator-role
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{"eks.amazonaws.com/role-arn":"arn:aws:iam::026544696832:role/multitenant-chatbot-orchestrator-role"},"name":"orchestrator-sa","namespace":"multi-tenant-chatbot"}}
+    creationTimestamp: "2026-01-28T17:13:30Z"
+    name: orchestrator-sa
+    namespace: multi-tenant-chatbot
+    resourceVersion: "88805"
+    uid: e2b83f0d-941f-4f4f-aedb-5c841e5677a0
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::026544696832:role/multitenant-chatbot-rag-role
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{"eks.amazonaws.com/role-arn":"arn:aws:iam::026544696832:role/multitenant-chatbot-rag-role"},"name":"rag-sa","namespace":"multi-tenant-chatbot"}}
+    creationTimestamp: "2026-01-28T17:13:31Z"
+    name: rag-sa
+    namespace: multi-tenant-chatbot
+    resourceVersion: "88815"
+    uid: 366395cc-06a6-4afb-a65c-519acc1da840
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::026544696832:role/multitenant-chatbot-request-router-role
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{"eks.amazonaws.com/role-arn":"arn:aws:iam::026544696832:role/multitenant-chatbot-request-router-role"},"name":"request-router-sa","namespace":"multi-tenant-chatbot"}}
+    creationTimestamp: "2026-01-28T17:13:29Z"
+    name: request-router-sa
+    namespace: multi-tenant-chatbot
+    resourceVersion: "88800"
+    uid: 0f36f25f-8f4c-4f2e-80d2-234c85092263
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::026544696832:role/multitenant-chatbot-vllm-role
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{"eks.amazonaws.com/role-arn":"arn:aws:iam::026544696832:role/multitenant-chatbot-vllm-role"},"name":"vllm-sa","namespace":"multi-tenant-chatbot"}}
+    creationTimestamp: "2026-01-28T17:13:30Z"
+    name: vllm-sa
+    namespace: multi-tenant-chatbot
+    resourceVersion: "88812"
+    uid: 078b6d81-8798-4939-a384-de599c2ec126
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"orchestrator-network-policy","namespace":"multi-tenant-chatbot"},"spec":{"egress":[{"ports":[{"port":8000,"protocol":"TCP"}],"to":[{"podSelector":{"matchLabels":{"app":"rag-service"}}}]},{"ports":[{"port":8000,"protocol":"TCP"}],"to":[{"podSelector":{"matchLabels":{"app":"vllm-inference"}}}]}],"ingress":[{"from":[{"podSelector":{"matchLabels":{"app":"request-router"}}}],"ports":[{"port":8000,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"orchestrator"}},"policyTypes":["Ingress","Egress"]}}
+    creationTimestamp: "2026-01-28T17:14:30Z"
+    generation: 1
+    name: orchestrator-network-policy
+    namespace: multi-tenant-chatbot
+    resourceVersion: "89202"
+    uid: 6fbbbaca-01e9-476f-b48e-1f57bc58342c
+  spec:
+    egress:
+    - ports:
+      - port: 8000
+        protocol: TCP
+      to:
+      - podSelector:
+          matchLabels:
+            app: rag-service
+    - ports:
+      - port: 8000
+        protocol: TCP
+      to:
+      - podSelector:
+          matchLabels:
+            app: vllm-inference
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: request-router
+      ports:
+      - port: 8000
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: orchestrator
+    policyTypes:
+    - Ingress
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"router-network-policy","namespace":"multi-tenant-chatbot"},"spec":{"egress":[{"ports":[{"port":8000,"protocol":"TCP"}],"to":[{"podSelector":{"matchLabels":{"app":"orchestrator"}}}]}],"ingress":[{"from":[{"namespaceSelector":{}}]}],"podSelector":{"matchLabels":{"app":"request-router"}},"policyTypes":["Ingress","Egress"]}}
+    creationTimestamp: "2026-01-28T17:14:30Z"
+    generation: 1
+    name: router-network-policy
+    namespace: multi-tenant-chatbot
+    resourceVersion: "89198"
+    uid: d71b7efb-e08e-4a45-b88b-afd50318415a
+  spec:
+    egress:
+    - ports:
+      - port: 8000
+        protocol: TCP
+      to:
+      - podSelector:
+          matchLabels:
+            app: orchestrator
+    ingress:
+    - from:
+      - namespaceSelector: {}
+    podSelector:
+      matchLabels:
+        app: request-router
+    policyTypes:
+    - Ingress
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"vllm-network-policy","namespace":"multi-tenant-chatbot"},"spec":{"egress":[],"ingress":[{"from":[{"podSelector":{"matchLabels":{"app":"orchestrator"}}}],"ports":[{"port":8000,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"vllm-inference"}},"policyTypes":["Ingress","Egress"]}}
+    creationTimestamp: "2026-01-28T17:20:15Z"
+    generation: 1
+    name: vllm-network-policy
+    namespace: multi-tenant-chatbot
+    resourceVersion: "91063"
+    uid: 9b38248f-ccca-49b8-ac62-0fcf725a1aea
+  spec:
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: orchestrator
+      ports:
+      - port: 8000
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: vllm-inference
+    policyTypes:
+    - Ingress
+    - Egress
+kind: List
+metadata:
+  resourceVersion: ""

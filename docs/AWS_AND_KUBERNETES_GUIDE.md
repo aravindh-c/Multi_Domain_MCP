@@ -464,3 +464,4 @@ If you want to go deeper, see:
 - **Kubernetes**: [infrastructure/kubernetes/README.md](../infrastructure/kubernetes/README.md)
 - **AWS setup**: [infrastructure/SETUP_YOUR_ACCOUNT.md](../infrastructure/SETUP_YOUR_ACCOUNT.md)
 - **Deployment summary**: [DEPLOYMENT_SUMMARY.md](../DEPLOYMENT_SUMMARY.md)
+- **Export, teardown, and recreate**: [docs/EXPORT_TEARDOWN_RECREATE.md](EXPORT_TEARDOWN_RECREATE.md)
