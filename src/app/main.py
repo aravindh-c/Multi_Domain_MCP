@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Annotated
@@ -17,6 +18,21 @@ configure_logging()
 configure_tracing()
 
 app = FastAPI(title="Multi-Domain Tool-First Chatbot")
+
+
+@app.on_event("startup")
+def load_secrets_from_aws():
+    """When running in AWS, load OPENAI_API_KEY from Secrets Manager if not in env."""
+    if os.environ.get("SECRETS_MANAGER_SECRET_NAME") and not os.environ.get("OPENAI_API_KEY"):
+        try:
+            from src.app.aws_settings import aws_settings
+            key = aws_settings.get_openai_api_key()
+            if key:
+                os.environ["OPENAI_API_KEY"] = key
+                settings.openai_api_key = key
+                logging.getLogger(__name__).info("Loaded OPENAI_API_KEY from Secrets Manager")
+        except Exception as e:
+            logging.getLogger(__name__).warning("Could not load OPENAI_API_KEY from Secrets Manager: %s", e)
 
 # Serve static files (chat UI)
 static_dir = Path(__file__).parent.parent.parent / "static"
