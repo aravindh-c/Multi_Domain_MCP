@@ -189,6 +189,34 @@ The app exposes a **chat UI** and a **REST API**. The ingress is an **internal**
 
 If you only have the cluster from your laptop, use **port-forward** and open **http://127.0.0.1:8000/** to use the chat window.
 
+## 🔐 One secret, multiple keys (Secrets Manager)
+
+You can store **multiple key-value pairs in a single secret** (e.g. `multitenant-chatbot-secrets1`):
+
+1. **AWS Console:** Secrets Manager → your secret → **Retrieve secret value** → **Edit**.
+2. Under **Key/value** add pairs, for example:
+   - `OPENAI_API_KEY` = `sk-your-openai-key`
+   - `LANGSMITH_API_KEY` = `ls-your-langsmith-key`
+3. Save. The orchestrator (and RAG service) load both from this one secret when `SECRETS_MANAGER_SECRET_NAME` is set and the keys are not in the pod env.
+
+The app reads **OPENAI_API_KEY** and **LANGSMITH_API_KEY** from that secret at startup (orchestrator and RAG); no need for separate secrets.
+
+## 📥 Ingesting vault data (diet RAG)
+
+To get real diet answers, the RAG service must have an index. You can **ingest once** after the RAG pod is running:
+
+1. **Port-forward to the RAG service:**
+   ```bash
+   kubectl port-forward -n multi-tenant-chatbot svc/rag-service 8002:8000
+   ```
+2. **Call the ingest endpoint** (replace the long string with your vault text, e.g. diet/medical notes):
+   ```bash
+   curl -X POST http://127.0.0.1:8002/ingest -H "Content-Type: application/json" -d "{\"user_id\":\"u123\",\"text\":\"User is vegetarian. No nuts. Prefers paneer and dal. Allergies: none.\"}"
+   ```
+3. **Use the same `user_id` in the chat** (e.g. the UI sends `user_id: u123`). Diet queries for that user will then use the ingested chunks.
+
+**Note:** With **emptyDir**, the index is lost when the RAG pod restarts. Re-run the ingest after a restart, or switch to a PVC for persistence.
+
 ## 🔄 Next Steps
 
 1. **Production Enhancements**:

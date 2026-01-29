@@ -22,17 +22,24 @@ app = FastAPI(title="Multi-Domain Tool-First Chatbot")
 
 @app.on_event("startup")
 def load_secrets_from_aws():
-    """When running in AWS, load OPENAI_API_KEY from Secrets Manager if not in env."""
-    if os.environ.get("SECRETS_MANAGER_SECRET_NAME") and not os.environ.get("OPENAI_API_KEY"):
-        try:
-            from src.app.aws_settings import aws_settings
+    """When running in AWS, load OPENAI_API_KEY and LANGSMITH_API_KEY from Secrets Manager if not in env."""
+    if not os.environ.get("SECRETS_MANAGER_SECRET_NAME"):
+        return
+    try:
+        from src.app.aws_settings import aws_settings
+        if not os.environ.get("OPENAI_API_KEY"):
             key = aws_settings.get_openai_api_key()
             if key:
                 os.environ["OPENAI_API_KEY"] = key
                 settings.openai_api_key = key
                 logging.getLogger(__name__).info("Loaded OPENAI_API_KEY from Secrets Manager")
-        except Exception as e:
-            logging.getLogger(__name__).warning("Could not load OPENAI_API_KEY from Secrets Manager: %s", e)
+        if not os.environ.get("LANGSMITH_API_KEY"):
+            ls_key = aws_settings.get_langsmith_api_key()
+            if ls_key:
+                os.environ["LANGSMITH_API_KEY"] = ls_key
+                logging.getLogger(__name__).info("Loaded LANGSMITH_API_KEY from Secrets Manager")
+    except Exception as e:
+        logging.getLogger(__name__).warning("Could not load secrets from Secrets Manager: %s", e)
 
 # Serve static files (chat UI)
 static_dir = Path(__file__).parent.parent.parent / "static"
